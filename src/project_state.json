@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 7,
+  "summary": "Photographer app focused strictly on sports and concert photography to showcase a specialized portfolio and manage client session bookings with approval workflow and optional payments.",
+  "architectural_notes": [
+    "Scope/brand direction: app is strictly for sports and concert photography (portfolio categories, copy, and theme should reflect this niche)."
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-public-facing-portfolio-section-where-visitors-can-browse-the-photographer-s-work-including-a-homepage-landing-page-a-gallery-grid-and-individual-project-photo-detail-views",
+      "title": "Create a public-facing portfolio section where visitors can browse the photographer’s work, including a homepage/landing page, a gallery grid, and individual project/photo detail views.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-backend-data-models-and-apis-to-store-and-retrieve-portfolio-items-including-images-as-frontend-static-asset-references-urls-and-support-photographer-only-create-update-delete-of-portfolio-items",
+      "title": "Implement backend data models and APIs to store and retrieve portfolio items (including images as frontend static asset references/URLs), and support photographer-only create/update/delete of portfolio items.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-client-session-booking-flow-that-lets-visitors-request-a-session-by-submitting-contact-info-preferred-date-time-session-type-location-notes-and-optional-reference-links",
+      "title": "Create a client session booking flow that lets visitors request a session by submitting contact info, preferred date/time, session type, location/notes, and optional reference links.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-photographer-dashboard-internet-identity-login-to-review-booking-requests-and-accept-or-deny-them-including-the-ability-to-propose-confirm-a-scheduled-time-and-add-internal-notes",
+      "title": "Add a photographer dashboard (Internet Identity login) to review booking requests and accept or deny them, including the ability to propose/confirm a scheduled time and add internal notes.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-basic-payment-tracking-for-sessions-including-setting-a-price-quote-for-a-booking-recording-payment-status-unpaid-paid-refunded-and-allowing-the-photographer-to-mark-a-booking-as-paid-manual-offline-from-the-dashboard",
+      "title": "Add basic payment tracking for sessions, including setting a price/quote for a booking, recording payment status (Unpaid/Paid/Refunded), and allowing the photographer to mark a booking as paid (manual/offline) from the dashboard.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-coherent-distinctive-visual-theme-for-a-professional-photography-brand-and-apply-it-consistently-across-the-landing-page-gallery-booking-flow-and-dashboard-colors-typography-spacing-and-components",
+      "title": "Add a coherent, distinctive visual theme for a professional photography brand and apply it consistently across the landing page, gallery, booking flow, and dashboard (colors, typography, spacing, and components).",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-generated-static-brand-imagery-and-integrate-it-into-the-ui-served-from-frontend-public-assets-generated-including-a-logo-and-a-homepage-hero-image",
+      "title": "Add generated static brand imagery and integrate it into the UI (served from frontend/public/assets/generated), including a logo and a homepage hero image.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-public-facing-ui-copy-and-labels-so-the-app-is-explicitly-and-consistently-positioned-as-a-sports-and-concert-photography-portfolio-and-booking-service-remove-references-to-weddings-portraits-family-corporate-and-generic-event-photography",
+      "title": "Update all public-facing UI copy and labels so the app is explicitly and consistently positioned as a sports and concert photography portfolio and booking service (remove references to weddings, portraits, family, corporate, and generic event photography).",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-constrain-portfolio-and-booking-inputs-in-the-ui-to-sports-and-concert-photography-only-by-updating-form-controls-and-placeholders-to-use-sports-concert-specific-options-instead-of-freeform-general-purpose-lists",
+      "title": "Constrain portfolio and booking inputs in the UI to sports and concert photography only by updating form controls and placeholders to use sports/concert-specific options instead of freeform/general-purpose lists.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-public-contact-information-area-to-the-site-so-visitors-can-find-the-photographer-s-contact-details-and-an-instagram-profile-link",
+      "title": "Add a public contact information area to the site so visitors can find the photographer’s contact details and an Instagram profile link.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-contact-details-email-text-and-instagram-url-handle-easy-to-update-by-centralizing-them-in-a-single-frontend-constant-config-location-and-rendering-from-that-source-in-the-contact-area",
+      "title": "Make the contact details (email text and Instagram URL/handle) easy to update by centralizing them in a single frontend constant/config location and rendering from that source in the contact area.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Portfolio showcase section for photographer's work (gallery/featured projects)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Client session booking system (request and schedule sessions)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Photographer workflow to accept or deny booking requests",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Payments support for sessions (collect payments during/after booking)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Implement role/ownership rules so only the photographer account can manage portfolio items and booking approvals, while public users can only submit booking requests and view the public portfolio.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Update branding, content categories, and UI copy to be strictly sports and concert photography (portfolio/booking context)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Enforce sports and concert-only constraints in the backend by validating portfolio item category and booking session type values on create/update, rejecting any non-sports/concert values with clear English error messages.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Add a contact information section including an Instagram profile link (e.g., in footer/contact page) for visitors to reach the photographer.",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Photographer portfolio + session booking with approval and payment tracking",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

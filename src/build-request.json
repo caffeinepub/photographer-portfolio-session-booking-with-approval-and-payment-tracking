@@ -1,0 +1,58 @@
+{
+  "kind": "build_request",
+  "title": "Add contact information section with Instagram link",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-12",
+      "text": "Add a public contact information area to the site so visitors can find the photographer’s contact details and an Instagram profile link.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Make a spot for contact information and instagram link."
+        ]
+      },
+      "acceptanceCriteria": [
+        "The public UI includes a clearly labeled contact area that is visible site-wide (e.g., in the footer) without requiring login.",
+        "The contact area displays at least: an email line (or equivalent contact method) and an Instagram link.",
+        "The Instagram link uses a standard external anchor (<a>) that opens in a new tab and includes rel=\"noopener noreferrer\".",
+        "All user-facing labels are in English (e.g., \"Contact\", \"Email\", \"Instagram\").",
+        "The UI remains responsive (looks acceptable on mobile and desktop) and matches the existing visual theme."
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "text": "Make the contact details (email text and Instagram URL/handle) easy to update by centralizing them in a single frontend constant/config location and rendering from that source in the contact area.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "Make a spot for contact information and instagram link."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Contact details are not hard-coded in multiple components; they come from a single exported constant/config.",
+        "Updating the config values updates the displayed contact info and Instagram link across the app without additional code changes."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify files under frontend/src/components/ui (read-only Shadcn components).",
+    "Do not modify any paths listed in frontend.immutablePaths.",
+    "Do not add new backend canisters or external services; keep changes within the existing React + Motoko single-actor app."
+  ],
+  "nonGoals": [
+    "Implementing a new backend data model for contact information.",
+    "Adding a full contact form, messaging system, email sending, or social-media API integrations.",
+    "Adding third-party authentication beyond Internet Identity."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

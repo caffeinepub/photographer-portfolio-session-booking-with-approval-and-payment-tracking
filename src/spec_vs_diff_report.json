@@ -1,0 +1,15 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-12T02:27:18.798Z",
+  "summary": "Implemented a site-wide contact section in the footer with centralized contact config. Added a single exported CONTACT_INFO constant and rendered email + Instagram link from it, using an external anchor that opens in a new tab with rel=\"noopener noreferrer\" and English labels.",
+  "missing_requirements": [],
+  "hallucinated_features": [],
+  "confidence": 0.84,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/components/layout/SiteFooter.tsx",
+    "frontend/src/constants/contactInfo.ts",
+    "project_state.json"
+  ]
+}

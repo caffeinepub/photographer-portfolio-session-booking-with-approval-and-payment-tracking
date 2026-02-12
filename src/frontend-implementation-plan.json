@@ -1,0 +1,45 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add site-wide contact section with centralized Instagram/email config",
+  "requirements": [
+    {
+      "id": "REQ-12",
+      "summary": "Add a public, site-wide contact area (footer) with email and Instagram external link.",
+      "acceptanceCriteria": [
+        "The public UI includes a clearly labeled contact area that is visible site-wide (e.g., in the footer) without requiring login.",
+        "The contact area displays at least: an email line (or equivalent contact method) and an Instagram link.",
+        "The Instagram link uses a standard external anchor (<a>) that opens in a new tab and includes rel=\"noopener noreferrer\".",
+        "All user-facing labels are in English (e.g., \"Contact\", \"Email\", \"Instagram\").",
+        "The UI remains responsive (looks acceptable on mobile and desktop) and matches the existing visual theme."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/SiteFooter.tsx",
+          "operation": "modify",
+          "description": "Extend the existing site-wide footer layout to include a clearly labeled \"Contact\" block that renders an Email line and an Instagram external anchor opening in a new tab with rel=\"noopener noreferrer\"; keep styling responsive and consistent with current footer theme and spacing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-13",
+      "summary": "Centralize contact details in a single frontend config/constant and render footer contact info from it.",
+      "acceptanceCriteria": [
+        "Contact details are not hard-coded in multiple components; they come from a single exported constant/config.",
+        "Updating the config values updates the displayed contact info and Instagram link across the app without additional code changes."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/constants/contactInfo.ts",
+          "operation": "create",
+          "description": "Create a single exported config/constant (e.g., email text/address and Instagram URL/handle) used as the source of truth for the app’s contact details."
+        },
+        {
+          "path": "frontend/src/components/layout/SiteFooter.tsx",
+          "operation": "modify",
+          "description": "Import the centralized contact config/constant and render the footer contact area from those values so updating the config updates UI without further code changes."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "frontend/src/index.css": "Global styles with elegant monochrome OKLCH color palette featuring warm undertones, custom font settings with serif headings, and smooth typography rendering.",
+  "frontend/tailwind.config.js": "Tailwind configuration with custom font families (Inter sans, Playfair Display serif), elegant shadow utilities, and fade-in animation for polished UI transitions.",
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup, defining all routes (public portfolio, booking, and protected dashboard), wrapped with ThemeProvider and Toaster for notifications.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including portfolio management, booking requests, user profiles, admin checks, and payment tracking with proper cache invalidation.",
+  "frontend/src/components/layout/AppLayout.tsx": "Root layout wrapper component that provides consistent structure with header, main content area, and footer across all pages.",
+  "frontend/src/components/layout/SiteHeader.tsx": "Responsive site header with logo, navigation menu (Home, Portfolio, Book Coverage, Dashboard), mobile menu toggle, and integrated login button.",
+  "frontend/src/components/layout/SiteFooter.tsx": "Site footer displaying logo, copyright, contact section with email and Instagram links, and attribution to caffeine.ai with responsive layout.",
+  "frontend/src/components/auth/LoginButton.tsx": "Reusable authentication button component that handles Internet Identity login/logout with loading states and query cache clearing on logout.",
+  "frontend/src/components/auth/AdminRoute.tsx": "Protected route wrapper that checks authentication and admin status, displaying appropriate access denied messages for unauthorized users.",
+  "frontend/src/components/auth/ProfileSetupModal.tsx": "Modal dialog for first-time user profile setup, collecting name, email, and phone with proper loading states and validation.",
+  "frontend/src/pages/LandingPage.tsx": "Homepage with hero section featuring sports/concert-specific copy and background image, features grid highlighting action photography expertise, featured portfolio preview, and call-to-action sections.",
+  "frontend/src/pages/PortfolioGalleryPage.tsx": "Public portfolio gallery page displaying all portfolio items in a responsive grid with sports and concert-specific intro text.",
+  "frontend/src/pages/PortfolioDetailPage.tsx": "Individual portfolio item detail page showing full image, title, category, description, timestamp, and call-to-action to book similar sessions.",
+  "frontend/src/pages/BookingPage.tsx": "Public booking request form with contact information, sports/concert coverage type selector (constrained to sports and concert options), event details, and validation that enforces allowed session types.",
+  "frontend/src/pages/BookingConfirmationPage.tsx": "Confirmation page displayed after successful booking submission with sports/concert-specific next steps and navigation options.",
+  "frontend/src/pages/Dashboard/DashboardHomePage.tsx": "Admin dashboard home with statistics cards, quick action links to bookings and portfolio management, recent pending bookings list, and profile setup modal integration.",
+  "frontend/src/pages/Dashboard/BookingsListPage.tsx": "Admin bookings list page with tabbed interface filtering by status (Pending, Accepted, Denied, All) and booking cards with quick access to details.",
+  "frontend/src/pages/Dashboard/BookingDetailPage.tsx": "Detailed booking view for admin with client/session information, accept/deny/confirm actions, payment tracking (price setting, payment status updates), and photographer notes with fixed variable naming conflict.",
+  "frontend/src/pages/Dashboard/PortfolioManagerPage.tsx": "Admin portfolio management interface with create/edit/delete functionality for portfolio items, using constrained Select component for sports/concert categories only.",
+  "frontend/src/constants/photographyOptions.ts": "Shared constants defining allowed sports and concert photography categories and session types with TypeScript type exports.",
+  "frontend/src/constants/contactInfo.ts": "Centralized configuration constant exporting contact details including email address and Instagram handle/URL for site-wide use."
+}

@@ -1,21 +1,33 @@
-import { Link } from '@tanstack/react-router';
-import { useGetAllBookingRequests } from '../../hooks/useQueries';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2 } from 'lucide-react';
-import type { BookingRequest } from '../../backend';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
+import type { BookingRequest } from "../../backend";
+import { useGetAllBookingRequests } from "../../hooks/useQueries";
 
 function BookingStatusBadge({ status }: { status: string }) {
-  const variants: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }> = {
-    pending: { variant: 'secondary', label: 'Pending' },
-    accepted: { variant: 'default', label: 'Accepted' },
-    confirmed: { variant: 'default', label: 'Confirmed' },
-    denied: { variant: 'destructive', label: 'Denied' },
+  const variants: Record<
+    string,
+    {
+      variant: "default" | "secondary" | "destructive" | "outline";
+      label: string;
+    }
+  > = {
+    pending: { variant: "secondary", label: "Pending" },
+    accepted: { variant: "default", label: "Accepted" },
+    confirmed: { variant: "default", label: "Confirmed" },
+    denied: { variant: "destructive", label: "Denied" },
   };
 
-  const config = variants[status] || { variant: 'outline', label: status };
+  const config = variants[status] || { variant: "outline", label: status };
   return <Badge variant={config.variant}>{config.label}</Badge>;
 }
 
@@ -39,7 +51,9 @@ function BookingCard({ booking }: { booking: BookingRequest }) {
           </div>
           <div>
             <p className="text-muted-foreground">Requested Date</p>
-            <p className="font-medium">{booking.session.date} at {booking.session.time}</p>
+            <p className="font-medium">
+              {booking.session.date} at {booking.session.time}
+            </p>
           </div>
           {booking.session.location && (
             <div>
@@ -50,12 +64,17 @@ function BookingCard({ booking }: { booking: BookingRequest }) {
           <div>
             <p className="text-muted-foreground">Submitted</p>
             <p className="font-medium">
-              {new Date(Number(booking.timestamp) / 1000000).toLocaleDateString()}
+              {new Date(
+                Number(booking.timestamp) / 1000000,
+              ).toLocaleDateString()}
             </p>
           </div>
         </div>
         <Button asChild className="w-full">
-          <Link to="/dashboard/bookings/$id" params={{ id: booking.id.toString() }}>
+          <Link
+            to="/dashboard/bookings/$id"
+            params={{ id: booking.id.toString() }}
+          >
             View Details
           </Link>
         </Button>
@@ -67,9 +86,11 @@ function BookingCard({ booking }: { booking: BookingRequest }) {
 export default function BookingsListPage() {
   const { data: bookings = [], isLoading } = useGetAllBookingRequests();
 
-  const pendingBookings = bookings.filter(b => b.status === 'pending');
-  const acceptedBookings = bookings.filter(b => b.status === 'accepted' || b.status === 'confirmed');
-  const deniedBookings = bookings.filter(b => b.status === 'denied');
+  const pendingBookings = bookings.filter((b) => b.status === "pending");
+  const acceptedBookings = bookings.filter(
+    (b) => b.status === "accepted" || b.status === "confirmed",
+  );
+  const deniedBookings = bookings.filter((b) => b.status === "denied");
 
   if (isLoading) {
     return (
@@ -87,7 +108,9 @@ export default function BookingsListPage() {
       <div className="max-w-6xl mx-auto space-y-8">
         <div>
           <h1 className="font-serif text-4xl font-bold mb-2">Bookings</h1>
-          <p className="text-muted-foreground">Manage all your client booking requests</p>
+          <p className="text-muted-foreground">
+            Manage all your client booking requests
+          </p>
         </div>
 
         <Tabs defaultValue="pending" className="space-y-6">
@@ -101,9 +124,7 @@ export default function BookingsListPage() {
             <TabsTrigger value="denied">
               Denied ({deniedBookings.length})
             </TabsTrigger>
-            <TabsTrigger value="all">
-              All ({bookings.length})
-            </TabsTrigger>
+            <TabsTrigger value="all">All ({bookings.length})</TabsTrigger>
           </TabsList>
 
           <TabsContent value="pending" className="space-y-4">
@@ -115,7 +136,7 @@ export default function BookingsListPage() {
               </Card>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
-                {pendingBookings.map(booking => (
+                {pendingBookings.map((booking) => (
                   <BookingCard key={booking.id.toString()} booking={booking} />
                 ))}
               </div>
@@ -131,7 +152,7 @@ export default function BookingsListPage() {
               </Card>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
-                {acceptedBookings.map(booking => (
+                {acceptedBookings.map((booking) => (
                   <BookingCard key={booking.id.toString()} booking={booking} />
                 ))}
               </div>
@@ -147,7 +168,7 @@ export default function BookingsListPage() {
               </Card>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
-                {deniedBookings.map(booking => (
+                {deniedBookings.map((booking) => (
                   <BookingCard key={booking.id.toString()} booking={booking} />
                 ))}
               </div>
@@ -163,7 +184,7 @@ export default function BookingsListPage() {
               </Card>
             ) : (
               <div className="grid md:grid-cols-2 gap-4">
-                {bookings.map(booking => (
+                {bookings.map((booking) => (
                   <BookingCard key={booking.id.toString()} booking={booking} />
                 ))}
               </div>

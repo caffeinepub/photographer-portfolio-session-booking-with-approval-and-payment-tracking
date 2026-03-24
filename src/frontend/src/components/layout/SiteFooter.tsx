@@ -1,49 +1,40 @@
-import { Heart, Mail, Instagram } from 'lucide-react';
-import { CONTACT_INFO } from '@/constants/contactInfo';
+import { Link } from "@tanstack/react-router";
+import { Heart } from "lucide-react";
 
 export default function SiteFooter() {
   const currentYear = new Date().getFullYear();
-  const appIdentifier = typeof window !== 'undefined' 
-    ? encodeURIComponent(window.location.hostname) 
-    : 'unknown-app';
+  const appIdentifier =
+    typeof window !== "undefined"
+      ? encodeURIComponent(window.location.hostname)
+      : "unknown-app";
 
   return (
     <footer className="border-t bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col space-y-6">
-          {/* Contact Section */}
+          {/* Main Footer Content */}
           <div className="flex flex-col md:flex-row md:justify-between md:items-start space-y-4 md:space-y-0">
             <div className="flex items-center space-x-3">
-              <img 
-                src="/assets/generated/photographer-logo.dim_512x512.png" 
-                alt="Logo" 
+              <img
+                src="/assets/generated/photographer-logo-slr-pics.dim_512x512.png"
+                alt="slr.pics Logo"
                 className="h-8 w-8 object-contain opacity-60"
               />
               <span className="text-sm text-muted-foreground">
-                © {currentYear} Lens & Light. All rights reserved.
+                © {currentYear} slr.pics. All rights reserved.
               </span>
             </div>
 
             <div className="flex flex-col space-y-2">
-              <h3 className="text-sm font-semibold text-foreground">Contact</h3>
-              <div className="flex flex-col space-y-1.5">
-                <a 
-                  href={`mailto:${CONTACT_INFO.email}`}
-                  className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Mail className="h-4 w-4" />
-                  <span>{CONTACT_INFO.email}</span>
-                </a>
-                <a 
-                  href={CONTACT_INFO.instagram.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Instagram className="h-4 w-4" />
-                  <span>{CONTACT_INFO.instagram.handle}</span>
-                </a>
-              </div>
+              <h3 className="text-sm font-semibold text-foreground">
+                Get in Touch
+              </h3>
+              <Link
+                to="/contact"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center"
+              >
+                Visit our contact page →
+              </Link>
             </div>
           </div>
 
@@ -53,7 +44,7 @@ export default function SiteFooter() {
               <span>Built with</span>
               <Heart className="h-4 w-4 text-red-500 fill-red-500" />
               <span>using</span>
-              <a 
+              <a
                 href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appIdentifier}`}
                 target="_blank"
                 rel="noopener noreferrer"

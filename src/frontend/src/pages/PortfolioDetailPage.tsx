@@ -1,11 +1,11 @@
-import { useParams, Link } from '@tanstack/react-router';
-import { useGetPortfolioItem } from '../hooks/useQueries';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Link, useParams } from "@tanstack/react-router";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { useGetPortfolioItem } from "../hooks/useQueries";
 
 export default function PortfolioDetailPage() {
-  const { id } = useParams({ from: '/portfolio/$id' });
+  const { id } = useParams({ from: "/portfolio/$id" });
   const { data: item, isLoading } = useGetPortfolioItem(BigInt(id));
 
   if (isLoading) {
@@ -22,7 +22,9 @@ export default function PortfolioDetailPage() {
   if (!item) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <h1 className="font-serif text-3xl font-bold mb-4">Portfolio Item Not Found</h1>
+        <h1 className="font-serif text-3xl font-bold mb-4">
+          Portfolio Item Not Found
+        </h1>
         <Button asChild variant="outline">
           <Link to="/portfolio">
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -49,7 +51,9 @@ export default function PortfolioDetailPage() {
               <Badge variant="secondary" className="mb-4">
                 {item.category}
               </Badge>
-              <h1 className="font-serif text-4xl font-bold mb-4">{item.title}</h1>
+              <h1 className="font-serif text-4xl font-bold mb-4">
+                {item.title}
+              </h1>
               <p className="text-muted-foreground text-lg leading-relaxed">
                 {item.description}
               </p>
@@ -57,11 +61,15 @@ export default function PortfolioDetailPage() {
 
             <div className="pt-6 border-t">
               <p className="text-sm text-muted-foreground">
-                Added {new Date(Number(item.timestamp) / 1000000).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
+                Added{" "}
+                {new Date(Number(item.timestamp) / 1000000).toLocaleDateString(
+                  "en-US",
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  },
+                )}
               </p>
             </div>
 

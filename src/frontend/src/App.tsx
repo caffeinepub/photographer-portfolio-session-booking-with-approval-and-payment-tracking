@@ -1,17 +1,24 @@
-import { createRouter, createRoute, createRootRoute, RouterProvider, Outlet } from '@tanstack/react-router';
-import { Toaster } from '@/components/ui/sonner';
-import { ThemeProvider } from 'next-themes';
-import LandingPage from './pages/LandingPage';
-import PortfolioGalleryPage from './pages/PortfolioGalleryPage';
-import PortfolioDetailPage from './pages/PortfolioDetailPage';
-import BookingPage from './pages/BookingPage';
-import BookingConfirmationPage from './pages/BookingConfirmationPage';
-import DashboardHomePage from './pages/Dashboard/DashboardHomePage';
-import BookingsListPage from './pages/Dashboard/BookingsListPage';
-import BookingDetailPage from './pages/Dashboard/BookingDetailPage';
-import PortfolioManagerPage from './pages/Dashboard/PortfolioManagerPage';
-import AppLayout from './components/layout/AppLayout';
-import AdminRoute from './components/auth/AdminRoute';
+import { Toaster } from "@/components/ui/sonner";
+import {
+  Outlet,
+  RouterProvider,
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from "@tanstack/react-router";
+import { ThemeProvider } from "next-themes";
+import AdminRoute from "./components/auth/AdminRoute";
+import AppLayout from "./components/layout/AppLayout";
+import BookingConfirmationPage from "./pages/BookingConfirmationPage";
+import BookingPage from "./pages/BookingPage";
+import ContactPage from "./pages/ContactPage";
+import BookingDetailPage from "./pages/Dashboard/BookingDetailPage";
+import BookingsListPage from "./pages/Dashboard/BookingsListPage";
+import DashboardHomePage from "./pages/Dashboard/DashboardHomePage";
+import PortfolioManagerPage from "./pages/Dashboard/PortfolioManagerPage";
+import LandingPage from "./pages/LandingPage";
+import PortfolioDetailPage from "./pages/PortfolioDetailPage";
+import PortfolioGalleryPage from "./pages/PortfolioGalleryPage";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -26,37 +33,43 @@ const rootRoute = createRootRoute({
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: "/",
   component: LandingPage,
 });
 
 const portfolioRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/portfolio',
+  path: "/portfolio",
   component: PortfolioGalleryPage,
 });
 
 const portfolioDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/portfolio/$id',
+  path: "/portfolio/$id",
   component: PortfolioDetailPage,
 });
 
 const bookingRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/book',
+  path: "/book",
   component: BookingPage,
 });
 
 const bookingConfirmationRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/book/confirmation',
+  path: "/book/confirmation",
   component: BookingConfirmationPage,
+});
+
+const contactRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/contact",
+  component: ContactPage,
 });
 
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/dashboard',
+  path: "/dashboard",
   component: () => (
     <AdminRoute>
       <DashboardHomePage />
@@ -66,7 +79,7 @@ const dashboardRoute = createRoute({
 
 const dashboardBookingsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/dashboard/bookings',
+  path: "/dashboard/bookings",
   component: () => (
     <AdminRoute>
       <BookingsListPage />
@@ -76,7 +89,7 @@ const dashboardBookingsRoute = createRoute({
 
 const dashboardBookingDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/dashboard/bookings/$id',
+  path: "/dashboard/bookings/$id",
   component: () => (
     <AdminRoute>
       <BookingDetailPage />
@@ -86,7 +99,7 @@ const dashboardBookingDetailRoute = createRoute({
 
 const dashboardPortfolioRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/dashboard/portfolio',
+  path: "/dashboard/portfolio",
   component: () => (
     <AdminRoute>
       <PortfolioManagerPage />
@@ -100,6 +113,7 @@ const routeTree = rootRoute.addChildren([
   portfolioDetailRoute,
   bookingRoute,
   bookingConfirmationRoute,
+  contactRoute,
   dashboardRoute,
   dashboardBookingsRoute,
   dashboardBookingDetailRoute,
@@ -108,7 +122,7 @@ const routeTree = rootRoute.addChildren([
 
 const router = createRouter({ routeTree });
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }

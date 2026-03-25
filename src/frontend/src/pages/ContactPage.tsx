@@ -11,9 +11,9 @@ export default function ContactPage() {
           <div className="max-w-2xl mx-auto">
             {/* Profile Picture */}
             <div className="flex justify-center mb-8">
-              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+              <div className="w-32 h-32 rounded-full overflow-hidden shadow-lg">
                 <img
-                  src={CONTACT_INFO.profilePicture}
+                  src="/assets/uploads/photographer_capturing_the_concert_scene-019d2741-8072-756a-ae31-939ae4e01812-1.png"
                   alt="slr.pics photographer"
                   className="w-full h-full object-cover"
                 />

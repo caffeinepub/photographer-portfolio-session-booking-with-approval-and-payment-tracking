@@ -20,9 +20,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "@tanstack/react-router";
-import { DollarSign, Info, Loader2 } from "lucide-react";
+import { DollarSign, Info, Loader2, Mail, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { CONTACT_INFO } from "../constants/contactInfo";
 import { SPORT_TYPES } from "../constants/photographyOptions";
 import { useCreateBookingRequest } from "../hooks/useQueries";
 
@@ -121,6 +122,43 @@ export default function BookingPage() {
             booking is approved by the photographer.
           </AlertDescription>
         </Alert>
+
+        {/* Other Sessions Inquiry Note */}
+        <div className="mb-6 rounded-xl border border-border/60 bg-muted/30 overflow-hidden">
+          <div className="flex items-center gap-2 px-5 py-3 border-b border-border/40 bg-muted/50">
+            <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Other Sessions
+            </span>
+          </div>
+          <div className="px-5 py-4">
+            <p className="text-sm text-foreground/80 leading-relaxed mb-4">
+              This booking form is for{" "}
+              <span className="font-semibold text-foreground">
+                sports sessions only
+              </span>
+              . For concerts, events, or any other type of photography, reach
+              out directly and we'll get you sorted.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a
+                href={`mailto:${CONTACT_INFO.email}`}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border/60 bg-background hover:bg-muted/60 transition-colors text-sm font-medium text-foreground"
+              >
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                {CONTACT_INFO.email}
+              </a>
+              <a
+                href={CONTACT_INFO.instagram.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border/60 bg-background hover:bg-muted/60 transition-colors text-sm font-medium text-foreground"
+              >
+                <MessageCircle className="h-4 w-4 text-muted-foreground" />
+                DM on Instagram
+              </a>
+            </div>
+          </div>
+        </div>
 
         {/* Pricing Badge */}
         <div className="flex items-center justify-center mb-8">

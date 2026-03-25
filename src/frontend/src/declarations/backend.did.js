@@ -374,7 +374,9 @@ export const idlFactory = ({ IDL }) => {
         [],
         [],
       ),
-    'verifyAlbumPassword' : IDL.Func(
+    'getUnavailableDates' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+    'setUnavailableDates' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
+        'verifyAlbumPassword' : IDL.Func(
         [IDL.Nat, IDL.Text],
         [IDL.Opt(IDL.Vec(IDL.Text))],
         ['query'],

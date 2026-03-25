@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Link } from "@tanstack/react-router";
 import {
   Calendar,
+  CalendarDays,
   CheckCircle,
   Clock,
   CreditCard,
@@ -304,7 +305,7 @@ export default function DashboardHomePage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card>
               <CardHeader>
                 <CardTitle>Manage Bookings</CardTitle>
@@ -351,6 +352,23 @@ export default function DashboardHomePage() {
                   <Link to="/dashboard/albums">
                     <FolderOpen className="mr-2 h-4 w-4" />
                     Manage Albums
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Availability</CardTitle>
+                <CardDescription>
+                  Manage which days are open for bookings
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="w-full">
+                  <Link to="/dashboard/availability">
+                    <CalendarDays className="mr-2 h-4 w-4" />
+                    Manage Availability
                   </Link>
                 </Button>
               </CardContent>

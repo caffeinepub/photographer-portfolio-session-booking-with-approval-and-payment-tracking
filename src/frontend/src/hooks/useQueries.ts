@@ -465,3 +465,31 @@ export function useSetHeroBackground() {
     },
   });
 }
+
+// ---- Availability ----
+
+export function useGetUnavailableDates() {
+  const { actor, isFetching } = useActor();
+  return useQuery<string[]>({
+    queryKey: ["unavailableDates"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return (actor as any).getUnavailableDates();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useSetUnavailableDates() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (dates: string[]) => {
+      if (!actor) throw new Error("Actor not available");
+      return (actor as any).setUnavailableDates(dates);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["unavailableDates"] });
+    },
+  });
+}

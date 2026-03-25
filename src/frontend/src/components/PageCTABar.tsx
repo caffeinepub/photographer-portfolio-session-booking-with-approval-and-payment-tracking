@@ -40,7 +40,7 @@ export default function PageCTABar() {
               className="border-foreground text-foreground bg-background hover:bg-foreground/10 font-semibold"
               data-ocid="cta.secondary_button"
             >
-              <Link to="/book">
+              <Link to="/availability">
                 <Clock className="mr-2 h-4 w-4" />
                 Check Availability
               </Link>

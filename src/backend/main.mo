@@ -126,6 +126,20 @@ actor {
     heroBackgroundUrl := url;
   };
 
+  // Unavailable Dates (settable by admin)
+  var unavailableDates : [Text] = [];
+
+  public query func getUnavailableDates() : async [Text] {
+    unavailableDates;
+  };
+
+  public shared ({ caller }) func setUnavailableDates(dates : [Text]) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can set unavailable dates");
+    };
+    unavailableDates := dates;
+  };
+
   // User Profile Functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {

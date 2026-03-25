@@ -11,11 +11,13 @@ import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import AdminRoute from "./components/auth/AdminRoute";
 import AppLayout from "./components/layout/AppLayout";
+import AvailabilityPage from "./pages/AvailabilityPage";
 import BookingConfirmationPage from "./pages/BookingConfirmationPage";
 import BookingPage from "./pages/BookingPage";
 import ClientAlbumsPage from "./pages/ClientAlbumsPage";
 import ContactPage from "./pages/ContactPage";
 import AlbumManagerPage from "./pages/Dashboard/AlbumManagerPage";
+import AvailabilityManagerPage from "./pages/Dashboard/AvailabilityManagerPage";
 import BookingDetailPage from "./pages/Dashboard/BookingDetailPage";
 import BookingsListPage from "./pages/Dashboard/BookingsListPage";
 import DashboardHomePage from "./pages/Dashboard/DashboardHomePage";
@@ -87,6 +89,12 @@ const photosRoute = createRoute({
   component: ClientAlbumsPage,
 });
 
+const availabilityRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/availability",
+  component: AvailabilityPage,
+});
+
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/dashboard",
@@ -137,6 +145,16 @@ const dashboardAlbumsRoute = createRoute({
   ),
 });
 
+const dashboardAvailabilityRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dashboard/availability",
+  component: () => (
+    <AdminRoute>
+      <AvailabilityManagerPage />
+    </AdminRoute>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   portfolioRoute,
@@ -145,11 +163,13 @@ const routeTree = rootRoute.addChildren([
   bookingConfirmationRoute,
   contactRoute,
   photosRoute,
+  availabilityRoute,
   dashboardRoute,
   dashboardBookingsRoute,
   dashboardBookingDetailRoute,
   dashboardPortfolioRoute,
   dashboardAlbumsRoute,
+  dashboardAvailabilityRoute,
 ]);
 
 const router = createRouter({ routeTree });

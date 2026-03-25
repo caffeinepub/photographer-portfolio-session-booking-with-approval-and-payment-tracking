@@ -138,7 +138,9 @@ export interface _SERVICE {
     [bigint, string, string, string, string],
     undefined
   >,
-  'verifyAlbumPassword' : ActorMethod<[bigint, string], [] | [Array<string>]>,
+  'getUnavailableDates' : ActorMethod<[], Array<string>>,
+  'setUnavailableDates' : ActorMethod<[Array<string>], undefined>,
+    'verifyAlbumPassword' : ActorMethod<[bigint, string], [] | [Array<string>]>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

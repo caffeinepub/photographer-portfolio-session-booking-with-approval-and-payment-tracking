@@ -8,11 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Link } from "@tanstack/react-router";
 import {
   Calendar,
   CheckCircle,
   Clock,
+  CreditCard,
   FolderOpen,
   Image,
   Loader2,
@@ -46,6 +48,7 @@ export default function DashboardHomePage() {
   const [customDomain, setCustomDomain] = useState("slr.pics");
   const [isPublishing, setIsPublishing] = useState(false);
   const [domainError, setDomainError] = useState<string | null>(null);
+  const [paymentsEnabled, setPaymentsEnabled] = useState(false);
   const bgFileRef = useRef<HTMLInputElement>(null);
 
   const isAuthenticated = !!identity;
@@ -215,6 +218,37 @@ export default function DashboardHomePage() {
                   Uploading your background photo...
                 </p>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Payments Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Payments
+              </CardTitle>
+              <CardDescription>
+                Enable Stripe payments to let clients pay a deposit when booking
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Switch
+                  id="payments-toggle"
+                  checked={paymentsEnabled}
+                  onCheckedChange={setPaymentsEnabled}
+                  data-ocid="payments.toggle"
+                />
+                <Label htmlFor="payments-toggle" className="cursor-pointer">
+                  {paymentsEnabled ? "Payments enabled" : "Payments disabled"}
+                </Label>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                {paymentsEnabled
+                  ? "Payments are enabled. Stripe integration coming soon — contact support to activate."
+                  : "Payments are currently disabled. Enable to collect deposits at booking."}
+              </p>
             </CardContent>
           </Card>
 

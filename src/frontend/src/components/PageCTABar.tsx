@@ -2,10 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { Calendar, Clock, Images } from "lucide-react";
 
-function scrollTop() {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
 export default function PageCTABar() {
   return (
     <section
@@ -32,7 +28,7 @@ export default function PageCTABar() {
               className="border-foreground text-foreground bg-background hover:bg-foreground/10 font-semibold"
               data-ocid="cta.primary_button"
             >
-              <Link to="/book" onClick={scrollTop}>
+              <Link to="/book">
                 <Calendar className="mr-2 h-4 w-4" />
                 Book Now
               </Link>
@@ -44,7 +40,7 @@ export default function PageCTABar() {
               className="border-foreground text-foreground bg-background hover:bg-foreground/10 font-semibold"
               data-ocid="cta.secondary_button"
             >
-              <Link to="/book" onClick={scrollTop}>
+              <Link to="/book">
                 <Clock className="mr-2 h-4 w-4" />
                 Check Availability
               </Link>
@@ -56,7 +52,7 @@ export default function PageCTABar() {
               className="border-foreground text-foreground bg-background hover:bg-foreground/10 font-semibold"
               data-ocid="cta.tertiary_button"
             >
-              <Link to="/photos" onClick={scrollTop}>
+              <Link to="/photos">
                 <Images className="mr-2 h-4 w-4" />
                 Client Photos
               </Link>

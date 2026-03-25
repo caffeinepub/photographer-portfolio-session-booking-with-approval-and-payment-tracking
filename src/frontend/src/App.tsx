@@ -5,8 +5,10 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  useRouterState,
 } from "@tanstack/react-router";
 import { ThemeProvider } from "next-themes";
+import { useEffect } from "react";
 import AdminRoute from "./components/auth/AdminRoute";
 import AppLayout from "./components/layout/AppLayout";
 import BookingConfirmationPage from "./pages/BookingConfirmationPage";
@@ -22,9 +24,19 @@ import LandingPage from "./pages/LandingPage";
 import PortfolioDetailPage from "./pages/PortfolioDetailPage";
 import PortfolioGalleryPage from "./pages/PortfolioGalleryPage";
 
+function ScrollToTop() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 const rootRoute = createRootRoute({
   component: () => (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+      <ScrollToTop />
       <AppLayout>
         <Outlet />
       </AppLayout>

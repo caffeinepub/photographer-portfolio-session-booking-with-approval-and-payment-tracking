@@ -115,10 +115,6 @@ export default function LandingPage() {
                   label: "Football",
                   desc: "Full game coverage from sideline to end zone",
                 },
-                {
-                  label: "Concerts",
-                  desc: "Live music and stage energy at Boots on the Bayou",
-                },
               ].map((item) => (
                 <div
                   key={item.label}

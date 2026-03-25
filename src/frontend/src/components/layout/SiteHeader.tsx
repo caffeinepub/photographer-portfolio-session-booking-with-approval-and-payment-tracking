@@ -32,57 +32,50 @@ export default function SiteHeader() {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Home
             </Link>
             <Link
               to="/portfolio"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Portfolio
             </Link>
             <Link
               to="/availability"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Check Availability
             </Link>
             <Link
               to="/photos"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Client Albums
             </Link>
             <Link
               to="/book"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Book Coverage
             </Link>
             <Link
               to="/about"
-              className="text-sm font-medium transition-colors hover:text-primary"
+              className="text-sm font-medium transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               About
             </Link>
-            <Link
-              to="/contact"
-              className="text-sm font-medium transition-colors hover:text-primary"
-              data-ocid="nav.link"
-            >
-              Contact
-            </Link>
             {isAuthenticated && isAdmin && (
               <Link
                 to="/dashboard"
-                className="text-sm font-medium transition-colors hover:text-primary"
+                className="text-sm font-medium transition-opacity hover:opacity-60"
                 data-ocid="nav.link"
               >
                 Dashboard
@@ -90,8 +83,15 @@ export default function SiteHeader() {
             )}
           </nav>
 
-          {/* Desktop Auth */}
-          <div className="hidden md:block">
+          {/* Desktop Right: Contact box + Login */}
+          <div className="hidden md:flex items-center space-x-3">
+            <Link
+              to="/contact"
+              className="border border-foreground px-5 py-2 text-sm font-medium tracking-wide transition-opacity hover:opacity-60 rounded-none"
+              data-ocid="nav.contact_button"
+            >
+              Contact
+            </Link>
             <LoginButton />
           </div>
 
@@ -115,7 +115,7 @@ export default function SiteHeader() {
           <div className="md:hidden py-4 space-y-4 border-t">
             <Link
               to="/"
-              className="block text-sm font-medium transition-colors hover:text-primary"
+              className="block text-sm font-medium transition-opacity hover:opacity-60"
               onClick={() => setMobileMenuOpen(false)}
               data-ocid="nav.link"
             >
@@ -123,7 +123,7 @@ export default function SiteHeader() {
             </Link>
             <Link
               to="/portfolio"
-              className="block text-sm font-medium transition-colors hover:text-primary"
+              className="block text-sm font-medium transition-opacity hover:opacity-60"
               onClick={() => setMobileMenuOpen(false)}
               data-ocid="nav.link"
             >
@@ -131,7 +131,7 @@ export default function SiteHeader() {
             </Link>
             <Link
               to="/availability"
-              className="block text-sm font-medium transition-colors hover:text-primary"
+              className="block text-sm font-medium transition-opacity hover:opacity-60"
               onClick={() => setMobileMenuOpen(false)}
               data-ocid="nav.link"
             >
@@ -139,7 +139,7 @@ export default function SiteHeader() {
             </Link>
             <Link
               to="/photos"
-              className="block text-sm font-medium transition-colors hover:text-primary"
+              className="block text-sm font-medium transition-opacity hover:opacity-60"
               onClick={() => setMobileMenuOpen(false)}
               data-ocid="nav.link"
             >
@@ -147,7 +147,7 @@ export default function SiteHeader() {
             </Link>
             <Link
               to="/book"
-              className="block text-sm font-medium transition-colors hover:text-primary"
+              className="block text-sm font-medium transition-opacity hover:opacity-60"
               onClick={() => setMobileMenuOpen(false)}
               data-ocid="nav.link"
             >
@@ -155,7 +155,7 @@ export default function SiteHeader() {
             </Link>
             <Link
               to="/about"
-              className="block text-sm font-medium transition-colors hover:text-primary"
+              className="block text-sm font-medium transition-opacity hover:opacity-60"
               onClick={() => setMobileMenuOpen(false)}
               data-ocid="nav.link"
             >
@@ -163,7 +163,7 @@ export default function SiteHeader() {
             </Link>
             <Link
               to="/contact"
-              className="block text-sm font-medium transition-colors hover:text-primary"
+              className="block text-sm font-medium transition-opacity hover:opacity-60"
               onClick={() => setMobileMenuOpen(false)}
               data-ocid="nav.link"
             >
@@ -172,7 +172,7 @@ export default function SiteHeader() {
             {isAuthenticated && isAdmin && (
               <Link
                 to="/dashboard"
-                className="block text-sm font-medium transition-colors hover:text-primary"
+                className="block text-sm font-medium transition-opacity hover:opacity-60"
                 onClick={() => setMobileMenuOpen(false)}
                 data-ocid="nav.link"
               >

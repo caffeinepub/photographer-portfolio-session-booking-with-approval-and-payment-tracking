@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { Calendar, Camera, Images } from "lucide-react";
+import { Calendar, Clock, Images } from "lucide-react";
 
 export default function PageCTABar() {
   return (
@@ -34,26 +34,24 @@ export default function PageCTABar() {
             </Button>
             <Button
               asChild
-              variant="outline"
               size="lg"
-              className="border-background/40 text-background hover:bg-background/10 hover:text-background"
+              className="bg-transparent border-2 border-background text-background hover:bg-background/10 font-semibold"
               data-ocid="cta.secondary_button"
             >
               <Link to="/book">
-                <Camera className="mr-2 h-4 w-4" />
+                <Clock className="mr-2 h-4 w-4" />
                 Check Availability
               </Link>
             </Button>
             <Button
               asChild
-              variant="outline"
               size="lg"
-              className="border-background/40 text-background hover:bg-background/10 hover:text-background"
-              data-ocid="cta.secondary_button"
+              className="bg-transparent border-2 border-background text-background hover:bg-background/10 font-semibold"
+              data-ocid="cta.tertiary_button"
             >
               <Link to="/photos">
                 <Images className="mr-2 h-4 w-4" />
-                Get Your Photos
+                Client Photos
               </Link>
             </Button>
           </div>

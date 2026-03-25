@@ -2,10 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { Calendar, Clock, Images } from "lucide-react";
 
+function scrollTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 export default function PageCTABar() {
   return (
     <section
-      className="mt-16 bg-foreground text-background"
+      className="mt-16 bg-background text-foreground border-t border-border"
       data-ocid="cta.section"
     >
       <div className="container mx-auto px-4 py-12">
@@ -24,10 +28,11 @@ export default function PageCTABar() {
             <Button
               asChild
               size="lg"
-              className="bg-background text-foreground hover:bg-background/90 font-semibold"
+              variant="outline"
+              className="border-foreground text-foreground bg-background hover:bg-foreground/10 font-semibold"
               data-ocid="cta.primary_button"
             >
-              <Link to="/book">
+              <Link to="/book" onClick={scrollTop}>
                 <Calendar className="mr-2 h-4 w-4" />
                 Book Now
               </Link>
@@ -35,10 +40,11 @@ export default function PageCTABar() {
             <Button
               asChild
               size="lg"
-              className="bg-transparent border-2 border-background text-background hover:bg-background/10 font-semibold"
+              variant="outline"
+              className="border-foreground text-foreground bg-background hover:bg-foreground/10 font-semibold"
               data-ocid="cta.secondary_button"
             >
-              <Link to="/book">
+              <Link to="/book" onClick={scrollTop}>
                 <Clock className="mr-2 h-4 w-4" />
                 Check Availability
               </Link>
@@ -46,10 +52,11 @@ export default function PageCTABar() {
             <Button
               asChild
               size="lg"
-              className="bg-transparent border-2 border-background text-background hover:bg-background/10 font-semibold"
+              variant="outline"
+              className="border-foreground text-foreground bg-background hover:bg-foreground/10 font-semibold"
               data-ocid="cta.tertiary_button"
             >
-              <Link to="/photos">
+              <Link to="/photos" onClick={scrollTop}>
                 <Images className="mr-2 h-4 w-4" />
                 Client Photos
               </Link>

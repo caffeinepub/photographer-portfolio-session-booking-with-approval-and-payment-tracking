@@ -122,6 +122,7 @@ export interface backendInterface {
     setBookingPrice(id: bigint, price: bigint): Promise<void>;
     setHeroBackground(url: string): Promise<void>;
     setUnavailableDates(dates: Array<string>): Promise<void>;
+    submitTestimonial(clientName: string, quote: string, sport: string | null): Promise<bigint>;
     toggleTestimonialApproval(id: bigint): Promise<void>;
     updateAlbum(id: bigint, name: string, clientName: string, description: string, password: string, coverPhotoUrl: string): Promise<void>;
     updatePaymentStatus(id: bigint, status: PaymentStatus): Promise<void>;

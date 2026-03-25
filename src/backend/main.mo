@@ -13,9 +13,9 @@ import Storage "blob-storage/Storage";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   // Mixins for storage and authorization
   include MixinStorage();
@@ -650,6 +650,28 @@ actor {
       Runtime.trap("Unauthorized: Only photographer can create testimonials");
     };
 
+    let id = nextTestimonialId;
+    nextTestimonialId += 1;
+
+    let testimonial : Testimonial = {
+      id;
+      clientName;
+      quote;
+      sport;
+      approved = false;
+      createdAt = Time.now();
+    };
+
+    testimonials.add(id, testimonial);
+    id;
+  };
+
+  // Public: Submit testimonial (no auth required, starts unapproved)
+  public shared func submitTestimonial(
+    clientName : Text,
+    quote : Text,
+    sport : ?Text,
+  ) : async Nat {
     let id = nextTestimonialId;
     nextTestimonialId += 1;
 

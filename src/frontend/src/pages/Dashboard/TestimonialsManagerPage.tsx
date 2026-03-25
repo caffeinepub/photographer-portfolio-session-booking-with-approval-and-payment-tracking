@@ -9,10 +9,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle, Clock, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -31,6 +30,9 @@ export default function TestimonialsManagerPage() {
   const [form, setForm] = useState({ clientName: "", quote: "", sport: "" });
   const [submitting, setSubmitting] = useState(false);
 
+  const pending = testimonials.filter((t) => !t.approved);
+  const approved = testimonials.filter((t) => t.approved);
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.clientName.trim() || !form.quote.trim()) {
@@ -39,12 +41,16 @@ export default function TestimonialsManagerPage() {
     }
     setSubmitting(true);
     try {
-      await createTestimonial.mutateAsync({
+      const result = await createTestimonial.mutateAsync({
         clientName: form.clientName.trim(),
         quote: form.quote.trim(),
         sport: form.sport.trim() || null,
       });
-      toast.success("Testimonial added!");
+      // Auto-approve admin-added testimonials
+      if (result && typeof result === "object" && "id" in result) {
+        await toggleApproval.mutateAsync((result as any).id);
+      }
+      toast.success("Testimonial added and published!");
       setForm({ clientName: "", quote: "", sport: "" });
     } catch {
       toast.error("Failed to add testimonial.");
@@ -60,6 +66,15 @@ export default function TestimonialsManagerPage() {
       toast.success("Testimonial deleted.");
     } catch {
       toast.error("Failed to delete.");
+    }
+  };
+
+  const handleApprove = async (id: bigint) => {
+    try {
+      await toggleApproval.mutateAsync(id);
+      toast.success("Testimonial approved and now live!");
+    } catch {
+      toast.error("Failed to approve.");
     }
   };
 
@@ -94,7 +109,7 @@ export default function TestimonialsManagerPage() {
             <Plus className="h-5 w-5" /> Add Testimonial
           </CardTitle>
           <CardDescription>
-            Add a new client review to your homepage
+            Add a client review directly — it will be published immediately
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -116,7 +131,7 @@ export default function TestimonialsManagerPage() {
                 <Label htmlFor="sport">Sport (optional)</Label>
                 <Input
                   id="sport"
-                  data-ocid="testimonial.input"
+                  data-ocid="testimonial.select"
                   value={form.sport}
                   onChange={(e) =>
                     setForm((p) => ({ ...p, sport: e.target.value }))
@@ -143,94 +158,183 @@ export default function TestimonialsManagerPage() {
               data-ocid="testimonial.submit_button"
               disabled={submitting}
             >
-              {submitting ? "Adding..." : "Add Testimonial"}
+              {submitting ? "Adding..." : "Add & Publish"}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {/* List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>All Testimonials</CardTitle>
-          <CardDescription>
-            Toggle approval to show/hide on the homepage
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <p
-              className="text-muted-foreground text-sm"
-              data-ocid="testimonials.loading_state"
-            >
-              Loading...
-            </p>
-          ) : testimonials.length === 0 ? (
-            <p
-              className="text-muted-foreground text-sm"
-              data-ocid="testimonials.empty_state"
-            >
-              No testimonials yet. Add one above.
-            </p>
-          ) : (
-            <div className="space-y-4">
-              {testimonials.map((t, i) => (
-                <div
-                  key={t.id.toString()}
-                  data-ocid={`testimonials.item.${i + 1}`}
-                  className="flex items-start gap-4 p-4 border border-border rounded-lg"
+      {isLoading ? (
+        <p
+          className="text-muted-foreground text-sm"
+          data-ocid="testimonials.loading_state"
+        >
+          Loading...
+        </p>
+      ) : (
+        <>
+          {/* Pending Review */}
+          <Card className="mb-6 border-amber-200 dark:border-amber-900">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                <Clock className="h-5 w-5" />
+                Pending Review
+                {pending.length > 0 && (
+                  <Badge
+                    variant="secondary"
+                    className="ml-1 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                  >
+                    {pending.length} pending
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription>
+                These were submitted by visitors and need your approval before
+                going live
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {pending.length === 0 ? (
+                <p
+                  className="text-muted-foreground text-sm"
+                  data-ocid="pending.empty_state"
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-sm">
-                        {t.clientName}
-                      </span>
-                      {t.sport && (
-                        <Badge
-                          variant="secondary"
-                          className="text-xs capitalize"
-                        >
-                          {t.sport}
-                        </Badge>
-                      )}
-                      <Badge
-                        variant={t.approved ? "default" : "outline"}
-                        className="text-xs"
-                      >
-                        {t.approved ? "Live" : "Hidden"}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      &ldquo;{t.quote}&rdquo;
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">
-                        {t.approved ? "On" : "Off"}
-                      </span>
-                      <Switch
-                        data-ocid={`testimonials.switch.${i + 1}`}
-                        checked={t.approved}
-                        onCheckedChange={() => handleToggle(t.id)}
-                      />
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      data-ocid={`testimonials.delete_button.${i + 1}`}
-                      onClick={() => handleDelete(t.id)}
-                      className="text-destructive hover:text-destructive"
+                  No pending submissions — you&apos;re all caught up!
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {pending.map((t, i) => (
+                    <div
+                      key={t.id.toString()}
+                      data-ocid={`pending.item.${i + 1}`}
+                      className="flex items-start gap-4 p-4 border border-amber-200 dark:border-amber-900/50 rounded-lg bg-amber-50/50 dark:bg-amber-950/20"
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-semibold text-sm">
+                            {t.clientName}
+                          </span>
+                          {t.sport && (
+                            <Badge
+                              variant="secondary"
+                              className="text-xs capitalize"
+                            >
+                              {t.sport}
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          &ldquo;{t.quote}&rdquo;
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Button
+                          size="sm"
+                          data-ocid={`pending.confirm_button.${i + 1}`}
+                          onClick={() => handleApprove(t.id)}
+                          className="gap-1.5 bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          <CheckCircle className="h-3.5 w-3.5" />
+                          Approve
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          data-ocid={`pending.delete_button.${i + 1}`}
+                          onClick={() => handleDelete(t.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Approved */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-500" />
+                Approved
+                {approved.length > 0 && (
+                  <Badge variant="secondary" className="ml-1">
+                    {approved.length} live
+                  </Badge>
+                )}
+              </CardTitle>
+              <CardDescription>
+                These are currently visible on the homepage
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {approved.length === 0 ? (
+                <p
+                  className="text-muted-foreground text-sm"
+                  data-ocid="testimonials.empty_state"
+                >
+                  No approved testimonials yet.
+                </p>
+              ) : (
+                <div className="space-y-4">
+                  {approved.map((t, i) => (
+                    <div
+                      key={t.id.toString()}
+                      data-ocid={`testimonials.item.${i + 1}`}
+                      className="flex items-start gap-4 p-4 border border-border rounded-lg"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-semibold text-sm">
+                            {t.clientName}
+                          </span>
+                          {t.sport && (
+                            <Badge
+                              variant="secondary"
+                              className="text-xs capitalize"
+                            >
+                              {t.sport}
+                            </Badge>
+                          )}
+                          <Badge variant="default" className="text-xs">
+                            Live
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          &ldquo;{t.quote}&rdquo;
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          data-ocid={`testimonials.toggle.${i + 1}`}
+                          onClick={() => handleToggle(t.id)}
+                          className="text-xs"
+                        >
+                          Unpublish
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          data-ocid={`testimonials.delete_button.${i + 1}`}
+                          onClick={() => handleDelete(t.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 }

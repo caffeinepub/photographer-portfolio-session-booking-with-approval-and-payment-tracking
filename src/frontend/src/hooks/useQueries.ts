@@ -593,3 +593,25 @@ export function useToggleTestimonialApproval() {
     },
   });
 }
+
+export function useSubmitTestimonial() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      clientName: string;
+      quote: string;
+      sport: string | null;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      return (actor as any).submitTestimonial(
+        data.clientName,
+        data.quote,
+        data.sport,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allTestimonials"] });
+    },
+  });
+}

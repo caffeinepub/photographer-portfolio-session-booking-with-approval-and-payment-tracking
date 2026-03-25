@@ -1,42 +1,29 @@
 # slr.pics
 
 ## Current State
-- Full-stack photography app with portfolio gallery, booking, client albums, availability calendar, and dashboard.
-- Portfolio grid links to detail pages; no lightbox.
-- Landing page has hero, features, featured work, and CTA section but no testimonials.
-- Booking confirmation page exists at /book/confirmation but only mentions email follow-up.
-- No watermark protection on portfolio images.
-- No testimonials section or management.
-- No Instagram feed/link section on landing page.
+Testimonials are displayed on the home page in a 'What Clients Say' section. Only the admin (photographer) can create testimonials via the dashboard. The dashboard Testimonials Manager lets you add, approve/disapprove, and delete testimonials.
 
 ## Requested Changes (Diff)
 
 ### Add
-- **Gallery lightbox**: Clicking a portfolio photo in PortfolioGalleryPage opens a full-screen modal overlay showing the full image with prev/next navigation and close button. (No change to PortfolioDetailPage routing — gallery grid opens lightbox instead of navigating away).
-- **Watermark overlay**: CSS text watermark "slr.pics" displayed diagonally across all portfolio images in the gallery grid and lightbox to protect work. Semi-transparent, repeated pattern.
-- **Testimonials section on LandingPage**: Show approved testimonials between Featured Work and CTA. Backend-managed: photographer approves/hides testimonials from dashboard. Clients cannot submit — photographer adds them manually.
-- **Testimonials dashboard management**: New section in DashboardHomePage and a TestimonialsManagerPage at /dashboard/testimonials for adding, editing, approving, and deleting testimonials.
-- **Instagram section on LandingPage**: A styled "Follow Along" section near the bottom with a prominent link to https://www.instagram.com/_slr.pics_ and a visual call-to-action. No actual API embed — just a well-designed promotional block.
-- **Improved booking confirmation page**: Update text to reference phone/text/DM contact methods (matching the booking form options), include phone number 225-910-2426, and remove mention of "email" as the follow-up method.
+- Public `submitTestimonial` backend function (no auth required) that stores a testimonial with `approved = false`
+- `useSubmitTestimonial` hook in useQueries.ts
+- Public submission form on the LandingPage below the testimonials section, allowing anyone to submit their name, quote, and optional sport. Shows a thank-you message after submission.
+- Pending testimonials section in the dashboard TestimonialsManagerPage, clearly separated from approved ones with approve/reject controls.
 
 ### Modify
-- `PortfolioGalleryPage`: Replace `<Link>` navigation with lightbox open handler for grid items.
-- `LandingPage`: Add testimonials section and Instagram section.
-- `BookingConfirmationPage`: Update contact info to reflect phone/text/DM options.
-- `DashboardHomePage`: Add Testimonials card.
-- `App.tsx`: Add /dashboard/testimonials route.
+- Backend `main.mo`: add `submitTestimonial` public shared func
+- `backend.d.ts`: add `submitTestimonial` to interface
+- `useQueries.ts`: add `useSubmitTestimonial` mutation
+- `LandingPage.tsx`: add testimonial submission form section
+- `TestimonialsManagerPage.tsx`: split list into Pending (unapproved) and Approved tabs/sections
 
 ### Remove
-- Nothing removed.
+- Nothing removed
 
 ## Implementation Plan
-1. Add Testimonial type and CRUD + approval backend methods via generate_motoko_code.
-2. Frontend: implement lightbox component with watermark overlay.
-3. Frontend: wire lightbox into PortfolioGalleryPage.
-4. Frontend: add testimonials section to LandingPage using useGetApprovedTestimonials query.
-5. Frontend: build TestimonialsManagerPage for dashboard.
-6. Frontend: add Testimonials card to DashboardHomePage.
-7. Frontend: add Instagram section to LandingPage.
-8. Frontend: update BookingConfirmationPage text.
-9. Frontend: add new queries/mutations for testimonials in useQueries.ts.
-10. Frontend: add /dashboard/testimonials route in App.tsx.
+1. Add `submitTestimonial` to backend main.mo
+2. Add `submitTestimonial` to backend.d.ts interface
+3. Add `useSubmitTestimonial` hook to useQueries.ts
+4. Add submission form section to LandingPage below testimonials
+5. Update TestimonialsManagerPage to show pending items prominently with approve button

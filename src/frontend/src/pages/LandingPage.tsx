@@ -1,23 +1,59 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Link } from "@tanstack/react-router";
-import { Award, Calendar, Camera, Quote } from "lucide-react";
+import { Award, Calendar, Camera, CheckCircle, Quote } from "lucide-react";
+import { useState } from "react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
+import { toast } from "sonner";
 import {
   useGetAllPortfolioItems,
   useGetApprovedTestimonials,
   useGetHeroBackground,
+  useSubmitTestimonial,
 } from "../hooks/useQueries";
 
 export default function LandingPage() {
   const { data: portfolioItems = [] } = useGetAllPortfolioItems();
   const { data: heroBackground = "" } = useGetHeroBackground();
   const { data: testimonials = [] } = useGetApprovedTestimonials();
+  const submitTestimonial = useSubmitTestimonial();
   const featuredItems = portfolioItems.slice(0, 3);
+
+  const [reviewForm, setReviewForm] = useState({
+    name: "",
+    quote: "",
+    sport: "",
+  });
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
   const heroBg =
     heroBackground ||
     "/assets/generated/photography-hero-sports-concert.dim_1920x1080.png";
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewForm.name.trim() || !reviewForm.quote.trim()) {
+      toast.error("Please fill in your name and review.");
+      return;
+    }
+    setReviewSubmitting(true);
+    try {
+      await submitTestimonial.mutateAsync({
+        clientName: reviewForm.name.trim(),
+        quote: reviewForm.quote.trim(),
+        sport: reviewForm.sport.trim() || null,
+      });
+      setReviewSubmitted(true);
+    } catch {
+      toast.error("Failed to submit your review. Please try again.");
+    } finally {
+      setReviewSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex flex-col">
@@ -193,6 +229,98 @@ export default function LandingPage() {
           </div>
         </section>
       )}
+
+      {/* Submit a Review */}
+      <section className="py-20 bg-[#0a0a0a]">
+        <div className="container mx-auto px-4 max-w-xl">
+          <div className="text-center mb-8">
+            <h2 className="font-serif text-3xl font-bold text-white mb-3">
+              Share Your Experience
+            </h2>
+            <p className="text-white/50 text-sm">
+              Worked with Slade? Leave a review — it will appear on the site
+              once approved.
+            </p>
+          </div>
+
+          {reviewSubmitted ? (
+            <div
+              data-ocid="review.success_state"
+              className="flex flex-col items-center gap-4 py-10 text-center"
+            >
+              <CheckCircle className="h-12 w-12 text-green-400" />
+              <p className="text-white font-semibold text-lg">
+                Thanks for your review!
+              </p>
+              <p className="text-white/50 text-sm max-w-xs">
+                Your submission has been received and will appear on the site
+                once approved.
+              </p>
+            </div>
+          ) : (
+            <form
+              onSubmit={handleReviewSubmit}
+              className="space-y-4"
+              data-ocid="review.panel"
+            >
+              <div className="space-y-1.5">
+                <Label htmlFor="review-name" className="text-white/80 text-sm">
+                  Your Name *
+                </Label>
+                <Input
+                  id="review-name"
+                  data-ocid="review.input"
+                  value={reviewForm.name}
+                  onChange={(e) =>
+                    setReviewForm((p) => ({ ...p, name: e.target.value }))
+                  }
+                  placeholder="e.g. Marcus Johnson"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-white/40"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="review-sport" className="text-white/80 text-sm">
+                  Sport (optional)
+                </Label>
+                <Input
+                  id="review-sport"
+                  data-ocid="review.input"
+                  value={reviewForm.sport}
+                  onChange={(e) =>
+                    setReviewForm((p) => ({ ...p, sport: e.target.value }))
+                  }
+                  placeholder="e.g. Baseball"
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-white/40"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="review-quote" className="text-white/80 text-sm">
+                  Your Review *
+                </Label>
+                <Textarea
+                  id="review-quote"
+                  data-ocid="review.textarea"
+                  value={reviewForm.quote}
+                  onChange={(e) =>
+                    setReviewForm((p) => ({ ...p, quote: e.target.value }))
+                  }
+                  placeholder="Tell us about your experience..."
+                  rows={4}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/30 focus:border-white/40 resize-none"
+                />
+              </div>
+              <Button
+                type="submit"
+                data-ocid="review.submit_button"
+                disabled={reviewSubmitting}
+                className="w-full"
+              >
+                {reviewSubmitting ? "Submitting..." : "Submit Review"}
+              </Button>
+            </form>
+          )}
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">

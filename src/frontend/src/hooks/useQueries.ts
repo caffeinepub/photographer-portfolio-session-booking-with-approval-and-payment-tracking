@@ -9,6 +9,7 @@ import type {
   UserProfile,
 } from "../backend";
 import { useActor } from "./useActor";
+import { useInternetIdentity } from "./useInternetIdentity";
 
 // Portfolio Queries
 export function useGetAllPortfolioItems() {
@@ -73,17 +74,20 @@ export function useSaveCallerUserProfile() {
   });
 }
 
-// Admin Check
+// Admin Check — keyed by identity principal so it re-checks on every login
 export function useIsCallerAdmin() {
   const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  const principalKey = identity?.getPrincipal().toString() ?? "anonymous";
 
   return useQuery<boolean>({
-    queryKey: ["isAdmin"],
+    queryKey: ["isAdmin", principalKey],
     queryFn: async () => {
       if (!actor) return false;
       return actor.isCallerAdmin();
     },
     enabled: !!actor && !isFetching,
+    staleTime: 0,
   });
 }
 

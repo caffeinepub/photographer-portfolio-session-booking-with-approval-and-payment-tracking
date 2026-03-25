@@ -231,7 +231,7 @@ export default function LandingPage() {
       )}
 
       {/* Submit a Review */}
-      <section className="py-20 bg-[#0a0a0a]">
+      <section id="leave-review" className="py-20 bg-[#0a0a0a]">
         <div className="container mx-auto px-4 max-w-xl">
           <div className="text-center mb-8">
             <h2 className="font-serif text-3xl font-bold text-white mb-3">

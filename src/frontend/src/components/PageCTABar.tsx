@@ -1,8 +1,26 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
-import { Calendar, Clock, Images } from "lucide-react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Calendar, Clock, Images, MessageSquare } from "lucide-react";
 
 export default function PageCTABar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLeaveReview = () => {
+    const scrollToReview = () => {
+      document
+        .getElementById("leave-review")
+        ?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    if (location.pathname === "/") {
+      scrollToReview();
+    } else {
+      navigate({ to: "/" });
+      setTimeout(scrollToReview, 100);
+    }
+  };
+
   return (
     <section
       className="mt-16 bg-background text-foreground border-t border-border"
@@ -20,7 +38,7 @@ export default function PageCTABar() {
             Lock in your session, check the calendar, or grab your photos — all
             in a few clicks.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2 flex-wrap">
             <Button
               asChild
               size="lg"
@@ -56,6 +74,16 @@ export default function PageCTABar() {
                 <Images className="mr-2 h-4 w-4" />
                 Client Photos
               </Link>
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-foreground text-foreground bg-background hover:bg-foreground/10 font-semibold"
+              data-ocid="cta.open_modal_button"
+              onClick={handleLeaveReview}
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Leave a Review
             </Button>
           </div>
         </div>

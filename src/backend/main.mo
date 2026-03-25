@@ -1,29 +1,33 @@
-import Map "mo:core/Map";
+
+import Principal "mo:core/Principal";
 import Array "mo:core/Array";
 import Timer "mo:core/Timer";
 import Text "mo:core/Text";
 import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Order "mo:core/Order";
+import Map "mo:core/Map";
+import Nat "mo:core/Nat";
 import List "mo:core/List";
 import Time "mo:core/Time";
-import Principal "mo:core/Principal";
-import MixinAuthorization "authorization/MixinAuthorization";
+import Storage "blob-storage/Storage";
 import AccessControl "authorization/access-control";
+import MixinStorage "blob-storage/Mixin";
+import MixinAuthorization "authorization/MixinAuthorization";
+
 
 actor {
-  // Authorization state
+  // Mixins for storage and authorization
+  include MixinStorage();
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
-  // User Profile Type
+  // User Profile Types
   public type UserProfile = {
     name : Text;
     email : Text;
     phone : Text;
   };
-
-  let userProfiles = Map.empty<Principal, UserProfile>();
 
   // Portfolio Types
   public type PortfolioItem = {
@@ -76,33 +80,55 @@ actor {
     paymentStatus : PaymentStatus;
   };
 
+  // Client Album Types
+  public type ClientAlbum = {
+    id : Nat;
+    name : Text;
+    clientName : Text;
+    description : Text;
+    password : Text;
+    photoUrls : [Text];
+    coverPhotoUrl : Text;
+    createdAt : Time.Time;
+  };
+
+  public type PublicAlbumView = {
+    id : Nat;
+    name : Text;
+    clientName : Text;
+    description : Text;
+    coverPhotoUrl : Text;
+    photoCount : Nat;
+  };
+
   // Storage
+  let userProfiles = Map.empty<Principal, UserProfile>();
   let portfolioItems = Map.empty<Nat, PortfolioItem>();
-  var nextPortfolioId : Nat = 0;
-
   let bookings = Map.empty<Nat, BookingRequest>();
+  let clientAlbums = Map.empty<Nat, ClientAlbum>();
+  var nextPortfolioId : Nat = 0;
   var nextBookingId : Nat = 0;
-
+  var nextAlbumId : Nat = 0;
   let scheduledReminders = List.empty<(Nat, BookingRequest)>();
 
   // User Profile Functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can access profiles");
+      Runtime.trap("Unauthorized: Only authorized users can access or save profiles");
     };
     userProfiles.get(caller);
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
-      Runtime.trap("Unauthorized: Can only view your own profile");
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only authorized users can access user profiles");
     };
     userProfiles.get(user);
   };
 
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can save profiles");
+      Runtime.trap("Unauthorized: Only authorized users can access or save profiles");
     };
     userProfiles.add(caller, profile);
   };
@@ -112,7 +138,7 @@ actor {
     title : Text,
     description : Text,
     imageUrl : Text,
-    category : Text
+    category : Text,
   ) : async Nat {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only photographer can create portfolio items");
@@ -126,11 +152,11 @@ actor {
     nextPortfolioId += 1;
 
     let item : PortfolioItem = {
-      id = id;
-      title = title;
-      description = description;
-      imageUrl = imageUrl;
-      category = category;
+      id;
+      title;
+      description;
+      imageUrl;
+      category;
       timestamp = Time.now();
     };
 
@@ -143,7 +169,7 @@ actor {
     title : Text,
     description : Text,
     imageUrl : Text,
-    category : Text
+    category : Text,
   ) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only photographer can update portfolio items");
@@ -158,10 +184,10 @@ actor {
       case (?existing) {
         let updated : PortfolioItem = {
           id = id;
-          title = title;
-          description = description;
-          imageUrl = imageUrl;
-          category = category;
+          title;
+          description;
+          imageUrl;
+          category;
           timestamp = existing.timestamp;
         };
         portfolioItems.add(id, updated);
@@ -194,7 +220,7 @@ actor {
   // Public users can create booking requests (no auth check)
   public shared ({ caller }) func createBookingRequest(
     client : ClientDetails,
-    session : SessionDetails
+    session : SessionDetails,
   ) : async Nat {
     if (session.sessionType != "sports" and session.sessionType != "concert") {
       Runtime.trap("Invalid session type: Only sports and concert sessions are allowed");
@@ -204,9 +230,9 @@ actor {
     nextBookingId += 1;
 
     let booking : BookingRequest = {
-      id = id;
-      client = client;
-      session = session;
+      id;
+      client;
+      session;
       timestamp = Time.now();
       status = #pending;
       photographerNotes = "";
@@ -241,7 +267,7 @@ actor {
   public shared ({ caller }) func acceptBooking(
     id : Nat,
     proposedDateTime : ?Text,
-    notes : Text
+    notes : Text,
   ) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only photographer can accept bookings");
@@ -257,7 +283,7 @@ actor {
           timestamp = existing.timestamp;
           status = #accepted;
           photographerNotes = notes;
-          proposedDateTime = proposedDateTime;
+          proposedDateTime;
           price = existing.price;
           paymentStatus = existing.paymentStatus;
         };
@@ -391,14 +417,13 @@ actor {
     };
   };
 
-  // Reminder system (internal)
+  // Reminder system
   func addReminder(id : Nat, booking : BookingRequest) {
-    scheduledReminders.add((id, booking));
-  };
-
-  func sendReminders() {
-    // Implementation for sending reminders
-    // This would typically integrate with external notification systems
+    let iter = scheduledReminders.values();
+    let remindersArray = iter.toArray();
+    let newRemindersArray = remindersArray.concat([(id, booking)]);
+    scheduledReminders.clear();
+    scheduledReminders.addAll(newRemindersArray.values());
   };
 
   // Admin-only: Get reminders
@@ -408,5 +433,166 @@ actor {
     };
     scheduledReminders.toArray();
   };
-};
 
+  // Client Album Functions
+  // Admin-only: Create album
+  public shared ({ caller }) func createAlbum(
+    name : Text,
+    clientName : Text,
+    description : Text,
+    password : Text,
+    coverPhotoUrl : Text,
+  ) : async Nat {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can create albums");
+    };
+
+    let id = nextAlbumId;
+    nextAlbumId += 1;
+
+    let album : ClientAlbum = {
+      id;
+      name;
+      clientName;
+      description;
+      password;
+      photoUrls = [];
+      coverPhotoUrl;
+      createdAt = Time.now();
+    };
+
+    clientAlbums.add(id, album);
+    id;
+  };
+
+  // Admin-only: Update album
+  public shared ({ caller }) func updateAlbum(
+    id : Nat,
+    name : Text,
+    clientName : Text,
+    description : Text,
+    password : Text,
+    coverPhotoUrl : Text,
+  ) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can update albums");
+    };
+
+    switch (clientAlbums.get(id)) {
+      case (null) { Runtime.trap("Album not found") };
+      case (?existing) {
+        let updated : ClientAlbum = {
+          id = id;
+          name;
+          clientName;
+          description;
+          password;
+          photoUrls = existing.photoUrls;
+          coverPhotoUrl;
+          createdAt = existing.createdAt;
+        };
+        clientAlbums.add(id, updated);
+      };
+    };
+  };
+
+  // Admin-only: Delete album
+  public shared ({ caller }) func deleteAlbum(id : Nat) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can delete albums");
+    };
+
+    switch (clientAlbums.get(id)) {
+      case (null) { Runtime.trap("Album not found") };
+      case (?_) { clientAlbums.remove(id) };
+    };
+  };
+
+  // Admin-only: Add photo to album
+  public shared ({ caller }) func addPhotoToAlbum(albumId : Nat, photoUrl : Text) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can add photos to albums");
+    };
+
+    switch (clientAlbums.get(albumId)) {
+      case (null) { Runtime.trap("Album not found") };
+      case (?existing) {
+        let updated : ClientAlbum = {
+          id = existing.id;
+          name = existing.name;
+          clientName = existing.clientName;
+          description = existing.description;
+          password = existing.password;
+          photoUrls = existing.photoUrls.concat([photoUrl]);
+          coverPhotoUrl = existing.coverPhotoUrl;
+          createdAt = existing.createdAt;
+        };
+        clientAlbums.add(albumId, updated);
+      };
+    };
+  };
+
+  // Admin-only: Remove photo from album
+  public shared ({ caller }) func removePhotoFromAlbum(albumId : Nat, photoUrl : Text) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can remove photos from albums");
+    };
+
+    switch (clientAlbums.get(albumId)) {
+      case (null) { Runtime.trap("Album not found") };
+      case (?existing) {
+        let updated : ClientAlbum = {
+          id = existing.id;
+          name = existing.name;
+          clientName = existing.clientName;
+          description = existing.description;
+          password = existing.password;
+          photoUrls = existing.photoUrls.filter(func(url) { url != photoUrl });
+          coverPhotoUrl = existing.coverPhotoUrl;
+          createdAt = existing.createdAt;
+        };
+        clientAlbums.add(albumId, updated);
+      };
+    };
+  };
+
+  // Admin-only: Get all albums
+  public query ({ caller }) func getAllAlbums() : async [ClientAlbum] {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can view all albums");
+    };
+    let iter = clientAlbums.values();
+    iter.toArray();
+  };
+
+  // Public: List albums (no passwords)
+  public query func listAlbums() : async [PublicAlbumView] {
+    let iter = clientAlbums.values();
+    iter.map(
+      func(album) {
+        {
+          id = album.id;
+          name = album.name;
+          clientName = album.clientName;
+          description = album.description;
+          coverPhotoUrl = album.coverPhotoUrl;
+          photoCount = album.photoUrls.size();
+        };
+      }
+    ).toArray();
+  };
+
+  // Public: Verify album password
+  public query func verifyAlbumPassword(albumId : Nat, password : Text) : async ?[Text] {
+    switch (clientAlbums.get(albumId)) {
+      case (null) { null };
+      case (?album) {
+        if (album.password == password) {
+          ?album.photoUrls;
+        } else {
+          null;
+        };
+      };
+    };
+  };
+};

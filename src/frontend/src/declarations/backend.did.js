@@ -8,6 +8,17 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
@@ -27,6 +38,16 @@ export const SessionDetails = IDL.Record({
   'location' : IDL.Text,
 });
 export const Time = IDL.Int;
+export const ClientAlbum = IDL.Record({
+  'id' : IDL.Nat,
+  'photoUrls' : IDL.Vec(IDL.Text),
+  'clientName' : IDL.Text,
+  'password' : IDL.Text,
+  'name' : IDL.Text,
+  'createdAt' : Time,
+  'description' : IDL.Text,
+  'coverPhotoUrl' : IDL.Text,
+});
 export const PortfolioItem = IDL.Record({
   'id' : IDL.Nat,
   'title' : IDL.Text,
@@ -62,12 +83,52 @@ export const BookingRequest = IDL.Record({
   'proposedDateTime' : IDL.Opt(IDL.Text),
   'price' : IDL.Opt(IDL.Nat),
 });
+export const PublicAlbumView = IDL.Record({
+  'id' : IDL.Nat,
+  'clientName' : IDL.Text,
+  'name' : IDL.Text,
+  'description' : IDL.Text,
+  'photoCount' : IDL.Nat,
+  'coverPhotoUrl' : IDL.Text,
+});
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'acceptBooking' : IDL.Func([IDL.Nat, IDL.Opt(IDL.Text), IDL.Text], [], []),
+  'addPhotoToAlbum' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'confirmBooking' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+  'createAlbum' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Nat],
+      [],
+    ),
   'createBookingRequest' : IDL.Func(
       [ClientDetails, SessionDetails],
       [IDL.Nat],
@@ -78,8 +139,10 @@ export const idlService = IDL.Service({
       [IDL.Nat],
       [],
     ),
+  'deleteAlbum' : IDL.Func([IDL.Nat], [], []),
   'deletePortfolioItem' : IDL.Func([IDL.Nat], [], []),
   'denyBooking' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+  'getAllAlbums' : IDL.Func([], [IDL.Vec(ClientAlbum)], ['query']),
   'getAllPortfolioItems' : IDL.Func([], [IDL.Vec(PortfolioItem)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -95,7 +158,9 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'listAlbums' : IDL.Func([], [IDL.Vec(PublicAlbumView)], ['query']),
   'markBookingAsPaid' : IDL.Func([IDL.Nat], [], []),
+  'removePhotoFromAlbum' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'retrieveAllBookingRequests' : IDL.Func(
       [],
       [IDL.Vec(BookingRequest)],
@@ -108,17 +173,38 @@ export const idlService = IDL.Service({
     ),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'setBookingPrice' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+  'updateAlbum' : IDL.Func(
+      [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [],
+      [],
+    ),
   'updatePaymentStatus' : IDL.Func([IDL.Nat, PaymentStatus], [], []),
   'updatePortfolioItem' : IDL.Func(
       [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
       [],
       [],
     ),
+  'verifyAlbumPassword' : IDL.Func(
+      [IDL.Nat, IDL.Text],
+      [IDL.Opt(IDL.Vec(IDL.Text))],
+      ['query'],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
@@ -138,6 +224,16 @@ export const idlFactory = ({ IDL }) => {
     'location' : IDL.Text,
   });
   const Time = IDL.Int;
+  const ClientAlbum = IDL.Record({
+    'id' : IDL.Nat,
+    'photoUrls' : IDL.Vec(IDL.Text),
+    'clientName' : IDL.Text,
+    'password' : IDL.Text,
+    'name' : IDL.Text,
+    'createdAt' : Time,
+    'description' : IDL.Text,
+    'coverPhotoUrl' : IDL.Text,
+  });
   const PortfolioItem = IDL.Record({
     'id' : IDL.Nat,
     'title' : IDL.Text,
@@ -173,12 +269,52 @@ export const idlFactory = ({ IDL }) => {
     'proposedDateTime' : IDL.Opt(IDL.Text),
     'price' : IDL.Opt(IDL.Nat),
   });
+  const PublicAlbumView = IDL.Record({
+    'id' : IDL.Nat,
+    'clientName' : IDL.Text,
+    'name' : IDL.Text,
+    'description' : IDL.Text,
+    'photoCount' : IDL.Nat,
+    'coverPhotoUrl' : IDL.Text,
+  });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'acceptBooking' : IDL.Func([IDL.Nat, IDL.Opt(IDL.Text), IDL.Text], [], []),
+    'addPhotoToAlbum' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'confirmBooking' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+    'createAlbum' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
     'createBookingRequest' : IDL.Func(
         [ClientDetails, SessionDetails],
         [IDL.Nat],
@@ -189,8 +325,10 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Nat],
         [],
       ),
+    'deleteAlbum' : IDL.Func([IDL.Nat], [], []),
     'deletePortfolioItem' : IDL.Func([IDL.Nat], [], []),
     'denyBooking' : IDL.Func([IDL.Nat, IDL.Text], [], []),
+    'getAllAlbums' : IDL.Func([], [IDL.Vec(ClientAlbum)], ['query']),
     'getAllPortfolioItems' : IDL.Func([], [IDL.Vec(PortfolioItem)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -210,7 +348,9 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'listAlbums' : IDL.Func([], [IDL.Vec(PublicAlbumView)], ['query']),
     'markBookingAsPaid' : IDL.Func([IDL.Nat], [], []),
+    'removePhotoFromAlbum' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'retrieveAllBookingRequests' : IDL.Func(
         [],
         [IDL.Vec(BookingRequest)],
@@ -223,11 +363,21 @@ export const idlFactory = ({ IDL }) => {
       ),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'setBookingPrice' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+    'updateAlbum' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [],
+        [],
+      ),
     'updatePaymentStatus' : IDL.Func([IDL.Nat, PaymentStatus], [], []),
     'updatePortfolioItem' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
         [],
         [],
+      ),
+    'verifyAlbumPassword' : IDL.Func(
+        [IDL.Nat, IDL.Text],
+        [IDL.Opt(IDL.Vec(IDL.Text))],
+        ['query'],
       ),
   });
 };

@@ -25,6 +25,16 @@ export type BookingStatus = { 'pending' : null } |
   { 'denied' : null } |
   { 'confirmed' : null } |
   { 'accepted' : null };
+export interface ClientAlbum {
+  'id' : bigint,
+  'photoUrls' : Array<string>,
+  'clientName' : string,
+  'password' : string,
+  'name' : string,
+  'createdAt' : Time,
+  'description' : string,
+  'coverPhotoUrl' : string,
+}
 export interface ClientDetails {
   'additionalNotes' : string,
   'name' : string,
@@ -42,6 +52,14 @@ export interface PortfolioItem {
   'timestamp' : Time,
   'category' : string,
 }
+export interface PublicAlbumView {
+  'id' : bigint,
+  'clientName' : string,
+  'name' : string,
+  'description' : string,
+  'photoCount' : bigint,
+  'coverPhotoUrl' : string,
+}
 export interface SessionDetails {
   'sessionType' : string,
   'date' : string,
@@ -58,15 +76,45 @@ export interface UserProfile {
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'acceptBooking' : ActorMethod<[bigint, [] | [string], string], undefined>,
+  'addPhotoToAlbum' : ActorMethod<[bigint, string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'confirmBooking' : ActorMethod<[bigint, string], undefined>,
+  'createAlbum' : ActorMethod<[string, string, string, string, string], bigint>,
   'createBookingRequest' : ActorMethod<[ClientDetails, SessionDetails], bigint>,
   'createPortfolioItem' : ActorMethod<[string, string, string, string], bigint>,
+  'deleteAlbum' : ActorMethod<[bigint], undefined>,
   'deletePortfolioItem' : ActorMethod<[bigint], undefined>,
   'denyBooking' : ActorMethod<[bigint, string], undefined>,
+  'getAllAlbums' : ActorMethod<[], Array<ClientAlbum>>,
   'getAllPortfolioItems' : ActorMethod<[], Array<PortfolioItem>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
@@ -74,16 +122,23 @@ export interface _SERVICE {
   'getReminders' : ActorMethod<[], Array<[bigint, BookingRequest]>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'listAlbums' : ActorMethod<[], Array<PublicAlbumView>>,
   'markBookingAsPaid' : ActorMethod<[bigint], undefined>,
+  'removePhotoFromAlbum' : ActorMethod<[bigint, string], undefined>,
   'retrieveAllBookingRequests' : ActorMethod<[], Array<BookingRequest>>,
   'retrieveBookingRequest' : ActorMethod<[bigint], [] | [BookingRequest]>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'setBookingPrice' : ActorMethod<[bigint, bigint], undefined>,
+  'updateAlbum' : ActorMethod<
+    [bigint, string, string, string, string, string],
+    undefined
+  >,
   'updatePaymentStatus' : ActorMethod<[bigint, PaymentStatus], undefined>,
   'updatePortfolioItem' : ActorMethod<
     [bigint, string, string, string, string],
     undefined
   >,
+  'verifyAlbumPassword' : ActorMethod<[bigint, string], [] | [Array<string>]>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

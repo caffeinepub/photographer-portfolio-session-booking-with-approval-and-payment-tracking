@@ -9,7 +9,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "@tanstack/react-router";
-import { Calendar, CheckCircle, Clock, Image, Rocket } from "lucide-react";
+import {
+  Calendar,
+  CheckCircle,
+  Clock,
+  FolderOpen,
+  Image,
+  Rocket,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import ProfileSetupModal from "../../components/auth/ProfileSetupModal";
@@ -47,7 +54,6 @@ export default function DashboardHomePage() {
   };
 
   const handlePublish = async () => {
-    // Validate hostname before publishing
     const error = validateHostname(customDomain);
     if (error) {
       setDomainError(error);
@@ -57,13 +63,11 @@ export default function DashboardHomePage() {
 
     setIsPublishing(true);
     try {
-      // Simulate publish action - in a real app, this would call a backend API
-      // For now, we'll just show a success message
       await new Promise((resolve) => setTimeout(resolve, 2000));
       toast.success(`Successfully configured domain: ${customDomain}`);
-    } catch (error) {
+    } catch (err) {
       toast.error("Failed to publish. Please try again.");
-      console.error("Publish error:", error);
+      console.error("Publish error:", err);
     } finally {
       setIsPublishing(false);
     }
@@ -184,7 +188,7 @@ export default function DashboardHomePage() {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <Card>
               <CardHeader>
                 <CardTitle>Manage Bookings</CardTitle>
@@ -214,6 +218,23 @@ export default function DashboardHomePage() {
                   <Link to="/dashboard/portfolio">
                     <Image className="mr-2 h-4 w-4" />
                     Manage Portfolio
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Client Albums</CardTitle>
+                <CardDescription>
+                  Create and manage password-protected photo albums
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="w-full">
+                  <Link to="/dashboard/albums">
+                    <FolderOpen className="mr-2 h-4 w-4" />
+                    Manage Albums
                   </Link>
                 </Button>
               </CardContent>

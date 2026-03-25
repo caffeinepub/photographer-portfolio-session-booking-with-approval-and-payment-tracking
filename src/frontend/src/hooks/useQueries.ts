@@ -2,8 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type {
   BookingRequest,
   BookingStatus,
+  ClientAlbum,
   PaymentStatus,
   PortfolioItem,
+  PublicAlbumView,
   UserProfile,
 } from "../backend";
 import { useActor } from "./useActor";
@@ -289,6 +291,149 @@ export function useDeletePortfolioItem() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["portfolioItems"] });
+    },
+  });
+}
+
+// ---- Album Queries ----
+
+export function useListAlbums() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<PublicAlbumView[]>({
+    queryKey: ["albums"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listAlbums();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useGetAllAlbums() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<ClientAlbum[]>({
+    queryKey: ["allAlbums"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllAlbums();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useVerifyAlbumPassword() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async (data: { albumId: bigint; password: string }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.verifyAlbumPassword(data.albumId, data.password);
+    },
+  });
+}
+
+export function useCreateAlbum() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      name: string;
+      clientName: string;
+      description: string;
+      password: string;
+      coverPhotoUrl: string;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.createAlbum(
+        data.name,
+        data.clientName,
+        data.description,
+        data.password,
+        data.coverPhotoUrl,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allAlbums"] });
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+    },
+  });
+}
+
+export function useUpdateAlbum() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: {
+      id: bigint;
+      name: string;
+      clientName: string;
+      description: string;
+      password: string;
+      coverPhotoUrl: string;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.updateAlbum(
+        data.id,
+        data.name,
+        data.clientName,
+        data.description,
+        data.password,
+        data.coverPhotoUrl,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allAlbums"] });
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+    },
+  });
+}
+
+export function useDeleteAlbum() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: bigint) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.deleteAlbum(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allAlbums"] });
+      queryClient.invalidateQueries({ queryKey: ["albums"] });
+    },
+  });
+}
+
+export function useAddPhotoToAlbum() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: { albumId: bigint; photoUrl: string }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.addPhotoToAlbum(data.albumId, data.photoUrl);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allAlbums"] });
+    },
+  });
+}
+
+export function useRemovePhotoFromAlbum() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: { albumId: bigint; photoUrl: string }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.removePhotoFromAlbum(data.albumId, data.photoUrl);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allAlbums"] });
     },
   });
 }

@@ -8,6 +8,25 @@ export interface None {
 }
 export type Option<T> = Some<T> | None;
 export type Time = bigint;
+export interface BookingRequest {
+    id: bigint;
+    status: BookingStatus;
+    client: ClientDetails;
+    paymentStatus: PaymentStatus;
+    session: SessionDetails;
+    timestamp: Time;
+    photographerNotes: string;
+    proposedDateTime?: string;
+    price?: bigint;
+}
+export interface PublicAlbumView {
+    id: bigint;
+    clientName: string;
+    name: string;
+    description: string;
+    photoCount: bigint;
+    coverPhotoUrl: string;
+}
 export interface PortfolioItem {
     id: bigint;
     title: string;
@@ -23,22 +42,21 @@ export interface SessionDetails {
     description: string;
     location: string;
 }
+export interface ClientAlbum {
+    id: bigint;
+    photoUrls: Array<string>;
+    clientName: string;
+    password: string;
+    name: string;
+    createdAt: Time;
+    description: string;
+    coverPhotoUrl: string;
+}
 export interface ClientDetails {
     additionalNotes: string;
     name: string;
     email: string;
     phone: string;
-}
-export interface BookingRequest {
-    id: bigint;
-    status: BookingStatus;
-    client: ClientDetails;
-    paymentStatus: PaymentStatus;
-    session: SessionDetails;
-    timestamp: Time;
-    photographerNotes: string;
-    proposedDateTime?: string;
-    price?: bigint;
 }
 export interface UserProfile {
     name: string;
@@ -63,12 +81,16 @@ export enum UserRole {
 }
 export interface backendInterface {
     acceptBooking(id: bigint, proposedDateTime: string | null, notes: string): Promise<void>;
+    addPhotoToAlbum(albumId: bigint, photoUrl: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     confirmBooking(id: bigint, confirmedDateTime: string): Promise<void>;
+    createAlbum(name: string, clientName: string, description: string, password: string, coverPhotoUrl: string): Promise<bigint>;
     createBookingRequest(client: ClientDetails, session: SessionDetails): Promise<bigint>;
     createPortfolioItem(title: string, description: string, imageUrl: string, category: string): Promise<bigint>;
+    deleteAlbum(id: bigint): Promise<void>;
     deletePortfolioItem(id: bigint): Promise<void>;
     denyBooking(id: bigint, notes: string): Promise<void>;
+    getAllAlbums(): Promise<Array<ClientAlbum>>;
     getAllPortfolioItems(): Promise<Array<PortfolioItem>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
@@ -76,11 +98,15 @@ export interface backendInterface {
     getReminders(): Promise<Array<[bigint, BookingRequest]>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    listAlbums(): Promise<Array<PublicAlbumView>>;
     markBookingAsPaid(id: bigint): Promise<void>;
+    removePhotoFromAlbum(albumId: bigint, photoUrl: string): Promise<void>;
     retrieveAllBookingRequests(): Promise<Array<BookingRequest>>;
     retrieveBookingRequest(id: bigint): Promise<BookingRequest | null>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     setBookingPrice(id: bigint, price: bigint): Promise<void>;
+    updateAlbum(id: bigint, name: string, clientName: string, description: string, password: string, coverPhotoUrl: string): Promise<void>;
     updatePaymentStatus(id: bigint, status: PaymentStatus): Promise<void>;
     updatePortfolioItem(id: bigint, title: string, description: string, imageUrl: string, category: string): Promise<void>;
+    verifyAlbumPassword(albumId: bigint, password: string): Promise<Array<string> | null>;
 }

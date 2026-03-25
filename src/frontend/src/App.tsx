@@ -11,7 +11,9 @@ import AdminRoute from "./components/auth/AdminRoute";
 import AppLayout from "./components/layout/AppLayout";
 import BookingConfirmationPage from "./pages/BookingConfirmationPage";
 import BookingPage from "./pages/BookingPage";
+import ClientAlbumsPage from "./pages/ClientAlbumsPage";
 import ContactPage from "./pages/ContactPage";
+import AlbumManagerPage from "./pages/Dashboard/AlbumManagerPage";
 import BookingDetailPage from "./pages/Dashboard/BookingDetailPage";
 import BookingsListPage from "./pages/Dashboard/BookingsListPage";
 import DashboardHomePage from "./pages/Dashboard/DashboardHomePage";
@@ -67,6 +69,12 @@ const contactRoute = createRoute({
   component: ContactPage,
 });
 
+const photosRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/photos",
+  component: ClientAlbumsPage,
+});
+
 const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/dashboard",
@@ -107,6 +115,16 @@ const dashboardPortfolioRoute = createRoute({
   ),
 });
 
+const dashboardAlbumsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dashboard/albums",
+  component: () => (
+    <AdminRoute>
+      <AlbumManagerPage />
+    </AdminRoute>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   portfolioRoute,
@@ -114,10 +132,12 @@ const routeTree = rootRoute.addChildren([
   bookingRoute,
   bookingConfirmationRoute,
   contactRoute,
+  photosRoute,
   dashboardRoute,
   dashboardBookingsRoute,
   dashboardBookingDetailRoute,
   dashboardPortfolioRoute,
+  dashboardAlbumsRoute,
 ]);
 
 const router = createRouter({ routeTree });

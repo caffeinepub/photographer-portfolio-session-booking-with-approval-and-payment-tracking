@@ -34,24 +34,35 @@ export default function SiteHeader() {
             <Link
               to="/"
               className="text-sm font-medium transition-colors hover:text-primary"
+              data-ocid="nav.link"
             >
               Home
             </Link>
             <Link
               to="/portfolio"
               className="text-sm font-medium transition-colors hover:text-primary"
+              data-ocid="nav.link"
             >
               Portfolio
             </Link>
             <Link
+              to="/photos"
+              className="text-sm font-medium transition-colors hover:text-primary"
+              data-ocid="nav.link"
+            >
+              Client Albums
+            </Link>
+            <Link
               to="/book"
               className="text-sm font-medium transition-colors hover:text-primary"
+              data-ocid="nav.link"
             >
               Book Coverage
             </Link>
             <Link
               to="/contact"
               className="text-sm font-medium transition-colors hover:text-primary"
+              data-ocid="nav.link"
             >
               Contact
             </Link>
@@ -59,6 +70,7 @@ export default function SiteHeader() {
               <Link
                 to="/dashboard"
                 className="text-sm font-medium transition-colors hover:text-primary"
+                data-ocid="nav.link"
               >
                 Dashboard
               </Link>
@@ -92,6 +104,7 @@ export default function SiteHeader() {
               to="/"
               className="block text-sm font-medium transition-colors hover:text-primary"
               onClick={() => setMobileMenuOpen(false)}
+              data-ocid="nav.link"
             >
               Home
             </Link>
@@ -99,13 +112,23 @@ export default function SiteHeader() {
               to="/portfolio"
               className="block text-sm font-medium transition-colors hover:text-primary"
               onClick={() => setMobileMenuOpen(false)}
+              data-ocid="nav.link"
             >
               Portfolio
+            </Link>
+            <Link
+              to="/photos"
+              className="block text-sm font-medium transition-colors hover:text-primary"
+              onClick={() => setMobileMenuOpen(false)}
+              data-ocid="nav.link"
+            >
+              Client Albums
             </Link>
             <Link
               to="/book"
               className="block text-sm font-medium transition-colors hover:text-primary"
               onClick={() => setMobileMenuOpen(false)}
+              data-ocid="nav.link"
             >
               Book Coverage
             </Link>
@@ -113,6 +136,7 @@ export default function SiteHeader() {
               to="/contact"
               className="block text-sm font-medium transition-colors hover:text-primary"
               onClick={() => setMobileMenuOpen(false)}
+              data-ocid="nav.link"
             >
               Contact
             </Link>
@@ -121,6 +145,7 @@ export default function SiteHeader() {
                 to="/dashboard"
                 className="block text-sm font-medium transition-colors hover:text-primary"
                 onClick={() => setMobileMenuOpen(false)}
+                data-ocid="nav.link"
               >
                 Dashboard
               </Link>

@@ -1,4 +1,5 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -18,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "@tanstack/react-router";
-import { Info, Loader2 } from "lucide-react";
+import { DollarSign, Info, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { SPORT_TYPES } from "../constants/photographyOptions";
@@ -38,9 +40,9 @@ export default function BookingPage() {
     description: "",
     date: "",
     time: "",
+    contactPreference: "Email",
   });
 
-  // Pre-fill sport from URL query param
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sport = params.get("sport");
@@ -67,13 +69,17 @@ export default function BookingPage() {
       SPORT_TYPES.find((s) => s.value === formData.sportType)?.label ??
       formData.sportType;
 
+    const notesWithContact = formData.additionalNotes
+      ? `${formData.additionalNotes} | Contact via: ${formData.contactPreference}`
+      : `Contact via: ${formData.contactPreference}`;
+
     try {
       await createBooking.mutateAsync({
         client: {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          additionalNotes: formData.additionalNotes,
+          additionalNotes: notesWithContact,
         },
         session: {
           sessionType: "sports",
@@ -108,13 +114,25 @@ export default function BookingPage() {
           </p>
         </div>
 
-        <Alert className="mb-8">
+        <Alert className="mb-4">
           <Info className="h-4 w-4" />
           <AlertDescription>
             This is a coverage request. Payment will be handled after your
             booking is approved by the photographer.
           </AlertDescription>
         </Alert>
+
+        {/* Pricing Badge */}
+        <div className="flex items-center justify-center mb-8">
+          <Badge
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-200 dark:border-green-700"
+            variant="outline"
+            data-ocid="booking.card"
+          >
+            <DollarSign className="h-4 w-4" />
+            Sports sessions start at $20
+          </Badge>
+        </div>
 
         <Card>
           <CardHeader>
@@ -163,6 +181,50 @@ export default function BookingPage() {
                     onChange={(e) => updateField("phone", e.target.value)}
                     placeholder="+1 (555) 000-0000"
                   />
+                </div>
+
+                {/* Preferred Contact Method */}
+                <div className="space-y-3">
+                  <Label>Preferred Contact Method</Label>
+                  <RadioGroup
+                    value={formData.contactPreference}
+                    onValueChange={(value) =>
+                      updateField("contactPreference", value)
+                    }
+                    className="space-y-2"
+                    data-ocid="booking.radio"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Email" id="contact-email" />
+                      <Label
+                        htmlFor="contact-email"
+                        className="cursor-pointer font-normal"
+                      >
+                        Email
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="Text Message" id="contact-text" />
+                      <Label
+                        htmlFor="contact-text"
+                        className="cursor-pointer font-normal"
+                      >
+                        Text Message
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem
+                        value="DM on Instagram (@_slr.pics_)"
+                        id="contact-dm"
+                      />
+                      <Label
+                        htmlFor="contact-dm"
+                        className="cursor-pointer font-normal"
+                      >
+                        DM on Instagram (@_slr.pics_)
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </div>
               </div>
 

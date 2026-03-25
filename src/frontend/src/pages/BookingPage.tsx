@@ -27,6 +27,8 @@ import { CONTACT_INFO } from "../constants/contactInfo";
 import { SPORT_TYPES } from "../constants/photographyOptions";
 import { useCreateBookingRequest } from "../hooks/useQueries";
 
+const DM_VALUE = "DM on Instagram (@_slr.pics_)";
+
 export default function BookingPage() {
   const navigate = useNavigate();
   const createBooking = useCreateBookingRequest();
@@ -42,6 +44,7 @@ export default function BookingPage() {
     date: "",
     time: "",
     contactPreference: "Email",
+    instagramHandle: "",
   });
 
   useEffect(() => {
@@ -66,13 +69,28 @@ export default function BookingPage() {
       return;
     }
 
+    if (
+      formData.contactPreference === DM_VALUE &&
+      !formData.instagramHandle.trim()
+    ) {
+      toast.error("Please enter your Instagram handle");
+      return;
+    }
+
     const sportLabel =
       SPORT_TYPES.find((s) => s.value === formData.sportType)?.label ??
       formData.sportType;
 
-    const notesWithContact = formData.additionalNotes
+    let notesWithContact = formData.additionalNotes
       ? `${formData.additionalNotes} | Contact via: ${formData.contactPreference}`
       : `Contact via: ${formData.contactPreference}`;
+
+    if (
+      formData.contactPreference === DM_VALUE &&
+      formData.instagramHandle.trim()
+    ) {
+      notesWithContact += ` | Instagram: ${formData.instagramHandle.trim()}`;
+    }
 
     try {
       await createBooking.mutateAsync({
@@ -251,10 +269,7 @@ export default function BookingPage() {
                       </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem
-                        value="DM on Instagram (@_slr.pics_)"
-                        id="contact-dm"
-                      />
+                      <RadioGroupItem value={DM_VALUE} id="contact-dm" />
                       <Label
                         htmlFor="contact-dm"
                         className="cursor-pointer font-normal"
@@ -263,6 +278,23 @@ export default function BookingPage() {
                       </Label>
                     </div>
                   </RadioGroup>
+
+                  {formData.contactPreference === DM_VALUE && (
+                    <div className="space-y-2 pl-1">
+                      <Label htmlFor="instagramHandle">
+                        Your Instagram Handle *
+                      </Label>
+                      <Input
+                        id="instagramHandle"
+                        data-ocid="booking.input"
+                        value={formData.instagramHandle}
+                        onChange={(e) =>
+                          updateField("instagramHandle", e.target.value)
+                        }
+                        placeholder="@yourusername"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 

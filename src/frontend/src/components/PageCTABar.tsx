@@ -20,7 +20,7 @@ export default function PageCTABar() {
   };
 
   const btnClass =
-    "border border-foreground/80 px-5 py-2 text-sm font-medium tracking-wide hover:bg-foreground/5 transition-colors";
+    "border border-foreground px-5 py-2 text-sm font-medium tracking-wide hover:bg-foreground/5 transition-colors";
 
   return (
     <section
@@ -72,7 +72,7 @@ export default function PageCTABar() {
             </button>
             <Link
               to="/contact"
-              className="border border-foreground px-5 py-2 text-sm font-medium tracking-wide hover:bg-foreground/5 transition-colors"
+              className={btnClass}
               data-ocid="cta.contact_button"
             >
               Contact

@@ -25,7 +25,7 @@ export default function AvailabilityPage() {
   return (
     <main>
       <section className="container mx-auto px-4 py-16">
-        <div className="max-w-2xl mx-auto space-y-8">
+        <div className="max-w-3xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-3">
             <p className="text-sm font-medium tracking-widest uppercase opacity-60">
@@ -74,6 +74,30 @@ export default function AvailabilityPage() {
                 disabled={(date) =>
                   date < new Date(new Date().setHours(0, 0, 0, 0))
                 }
+                classNames={{
+                  months:
+                    "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                  month: "space-y-4",
+                  caption: "flex justify-center pt-1 relative items-center",
+                  caption_label: "text-lg font-medium",
+                  nav: "space-x-1 flex items-center",
+                  nav_button:
+                    "h-9 w-9 bg-transparent p-0 opacity-50 hover:opacity-100",
+                  nav_button_previous: "absolute left-1",
+                  nav_button_next: "absolute right-1",
+                  table: "w-full border-collapse space-y-1",
+                  head_row: "flex",
+                  head_cell:
+                    "text-muted-foreground rounded-md w-12 font-normal text-sm",
+                  row: "flex w-full mt-2",
+                  cell: "h-12 w-12 text-center text-sm p-0 relative",
+                  day: "h-12 w-12 p-0 font-normal aria-selected:opacity-100",
+                  day_selected:
+                    "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                  day_today: "bg-accent text-accent-foreground",
+                  day_outside: "text-muted-foreground opacity-50",
+                  day_disabled: "text-muted-foreground opacity-50",
+                }}
               />
             )}
           </div>

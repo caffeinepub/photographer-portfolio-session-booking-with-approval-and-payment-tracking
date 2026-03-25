@@ -7,6 +7,14 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export interface Testimonial {
+    id: bigint;
+    clientName: string;
+    createdAt: Time;
+    quote: string;
+    sport?: string;
+    approved: boolean;
+}
 export type Time = bigint;
 export interface BookingRequest {
     id: bigint;
@@ -87,16 +95,22 @@ export interface backendInterface {
     createAlbum(name: string, clientName: string, description: string, password: string, coverPhotoUrl: string): Promise<bigint>;
     createBookingRequest(client: ClientDetails, session: SessionDetails): Promise<bigint>;
     createPortfolioItem(title: string, description: string, imageUrl: string, category: string): Promise<bigint>;
+    createTestimonial(clientName: string, quote: string, sport: string | null): Promise<bigint>;
     deleteAlbum(id: bigint): Promise<void>;
     deletePortfolioItem(id: bigint): Promise<void>;
+    deleteTestimonial(id: bigint): Promise<void>;
     denyBooking(id: bigint, notes: string): Promise<void>;
     getAllAlbums(): Promise<Array<ClientAlbum>>;
     getAllPortfolioItems(): Promise<Array<PortfolioItem>>;
+    getAllTestimonials(): Promise<Array<Testimonial>>;
+    getApprovedTestimonials(): Promise<Array<Testimonial>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getHeroBackground(): Promise<string>;
     getPortfolioItem(id: bigint): Promise<PortfolioItem | null>;
     getReminders(): Promise<Array<[bigint, BookingRequest]>>;
+    getTestimonial(id: bigint): Promise<Testimonial | null>;
+    getUnavailableDates(): Promise<Array<string>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     listAlbums(): Promise<Array<PublicAlbumView>>;
@@ -107,8 +121,11 @@ export interface backendInterface {
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     setBookingPrice(id: bigint, price: bigint): Promise<void>;
     setHeroBackground(url: string): Promise<void>;
+    setUnavailableDates(dates: Array<string>): Promise<void>;
+    toggleTestimonialApproval(id: bigint): Promise<void>;
     updateAlbum(id: bigint, name: string, clientName: string, description: string, password: string, coverPhotoUrl: string): Promise<void>;
     updatePaymentStatus(id: bigint, status: PaymentStatus): Promise<void>;
     updatePortfolioItem(id: bigint, title: string, description: string, imageUrl: string, category: string): Promise<void>;
+    updateTestimonial(id: bigint, clientName: string, quote: string, sport: string | null): Promise<void>;
     verifyAlbumPassword(albumId: bigint, password: string): Promise<Array<string> | null>;
 }

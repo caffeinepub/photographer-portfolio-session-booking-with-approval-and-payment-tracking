@@ -493,3 +493,103 @@ export function useSetUnavailableDates() {
     },
   });
 }
+
+// ---- Testimonial Queries ----
+
+export function useGetApprovedTestimonials() {
+  const { actor, isFetching } = useActor();
+  return useQuery({
+    queryKey: ["approvedTestimonials"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getApprovedTestimonials();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useGetAllTestimonials() {
+  const { actor, isFetching } = useActor();
+  return useQuery({
+    queryKey: ["allTestimonials"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllTestimonials();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useCreateTestimonial() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      clientName: string;
+      quote: string;
+      sport: string | null;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.createTestimonial(data.clientName, data.quote, data.sport);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allTestimonials"] });
+      queryClient.invalidateQueries({ queryKey: ["approvedTestimonials"] });
+    },
+  });
+}
+
+export function useUpdateTestimonial() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      id: bigint;
+      clientName: string;
+      quote: string;
+      sport: string | null;
+    }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.updateTestimonial(
+        data.id,
+        data.clientName,
+        data.quote,
+        data.sport,
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allTestimonials"] });
+      queryClient.invalidateQueries({ queryKey: ["approvedTestimonials"] });
+    },
+  });
+}
+
+export function useDeleteTestimonial() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: bigint) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.deleteTestimonial(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allTestimonials"] });
+      queryClient.invalidateQueries({ queryKey: ["approvedTestimonials"] });
+    },
+  });
+}
+
+export function useToggleTestimonialApproval() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: bigint) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.toggleTestimonialApproval(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allTestimonials"] });
+      queryClient.invalidateQueries({ queryKey: ["approvedTestimonials"] });
+    },
+  });
+}

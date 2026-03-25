@@ -1,14 +1,18 @@
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "@tanstack/react-router";
-import { Award, Calendar, Camera } from "lucide-react";
+import { Award, Calendar, Camera, Quote } from "lucide-react";
+import { SiInstagram, SiTiktok } from "react-icons/si";
 import {
   useGetAllPortfolioItems,
+  useGetApprovedTestimonials,
   useGetHeroBackground,
 } from "../hooks/useQueries";
 
 export default function LandingPage() {
   const { data: portfolioItems = [] } = useGetAllPortfolioItems();
   const { data: heroBackground = "" } = useGetHeroBackground();
+  const { data: testimonials = [] } = useGetApprovedTestimonials();
   const featuredItems = portfolioItems.slice(0, 3);
 
   const heroBg =
@@ -120,8 +124,7 @@ export default function LandingPage() {
               {featuredItems.map((item) => (
                 <Link
                   key={item.id.toString()}
-                  to="/portfolio/$id"
-                  params={{ id: item.id.toString() }}
+                  to="/portfolio"
                   className="group relative aspect-[4/5] overflow-hidden rounded-sm shadow-elegant hover:shadow-elegant-lg transition-all duration-300"
                 >
                   <img
@@ -149,6 +152,48 @@ export default function LandingPage() {
         </section>
       )}
 
+      {/* Testimonials */}
+      {testimonials.length > 0 && (
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="font-serif text-4xl font-bold mb-4">
+                What Clients Say
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Stories from athletes, teams, and event organizers
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {testimonials.map((t, i) => (
+                <Card
+                  key={t.id.toString()}
+                  data-ocid={`testimonials.item.${i + 1}`}
+                  className="relative"
+                >
+                  <CardContent className="pt-8 pb-6 px-6">
+                    <Quote className="absolute top-4 left-4 h-6 w-6 text-primary/30" />
+                    <p className="text-foreground/80 leading-relaxed mb-6 italic">
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
+                    <div className="border-t border-border pt-4">
+                      <p className="font-semibold text-foreground">
+                        {t.clientName}
+                      </p>
+                      {t.sport && (
+                        <p className="text-sm text-muted-foreground capitalize mt-0.5">
+                          {t.sport}
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
@@ -162,6 +207,59 @@ export default function LandingPage() {
           <Button asChild size="lg" variant="secondary">
             <Link to="/book">Get Started</Link>
           </Button>
+        </div>
+      </section>
+
+      {/* Social Follow Section */}
+      <section className="py-16 bg-[#0a0a0a]">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="font-serif text-3xl font-bold text-white mb-3">
+            Follow Along
+          </h2>
+          <p className="text-white/50 mb-10 max-w-lg mx-auto">
+            Stay up to date with the latest shots and behind-the-scenes moments
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <a
+              href="https://www.instagram.com/_slr.pics_"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-ocid="social.primary_button"
+              className="flex items-center gap-3 px-8 py-4 rounded-full text-white font-semibold text-base transition-all hover:scale-105 active:scale-95"
+              style={{
+                background:
+                  "linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
+              }}
+            >
+              <SiInstagram className="h-5 w-5" />
+              Follow on Instagram
+            </a>
+            <a
+              href="https://www.tiktok.com/@_slr.pics_?_r=1&_t=ZP-93qjJcBT9Re"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-ocid="social.secondary_button"
+              className="flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black font-semibold text-base transition-all hover:scale-105 active:scale-95 border border-white/20"
+            >
+              <SiTiktok className="h-5 w-5" />
+              Follow on TikTok
+            </a>
+          </div>
+          <div className="flex items-center justify-center gap-8 mt-10">
+            <div className="text-center">
+              <p className="text-white/40 text-xs uppercase tracking-widest mb-1">
+                Instagram
+              </p>
+              <p className="text-white/70 text-sm font-medium">@_slr.pics_</p>
+            </div>
+            <div className="w-px h-8 bg-white/10" />
+            <div className="text-center">
+              <p className="text-white/40 text-xs uppercase tracking-widest mb-1">
+                TikTok
+              </p>
+              <p className="text-white/70 text-sm font-medium">@_slr.pics_</p>
+            </div>
+          </div>
         </div>
       </section>
     </div>

@@ -1,4 +1,3 @@
-
 import Principal "mo:core/Principal";
 import Array "mo:core/Array";
 import Timer "mo:core/Timer";
@@ -14,8 +13,9 @@ import Storage "blob-storage/Storage";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 import MixinAuthorization "authorization/MixinAuthorization";
+import Migration "migration";
 
-
+(with migration = Migration.run)
 actor {
   // Mixins for storage and authorization
   include MixinStorage();
@@ -101,14 +101,27 @@ actor {
     photoCount : Nat;
   };
 
+  public type Testimonial = {
+    id : Nat;
+    clientName : Text;
+    quote : Text;
+    sport : ?Text;
+    approved : Bool;
+    createdAt : Time.Time;
+  };
+
   // Storage
   let userProfiles = Map.empty<Principal, UserProfile>();
   let portfolioItems = Map.empty<Nat, PortfolioItem>();
   let bookings = Map.empty<Nat, BookingRequest>();
   let clientAlbums = Map.empty<Nat, ClientAlbum>();
+  let testimonials = Map.empty<Nat, Testimonial>();
+
   var nextPortfolioId : Nat = 0;
   var nextBookingId : Nat = 0;
   var nextAlbumId : Nat = 0;
+  var nextTestimonialId : Nat = 0;
+
   let scheduledReminders = List.empty<(Nat, BookingRequest)>();
 
   // Hero Background URL (settable by admin)
@@ -623,5 +636,117 @@ actor {
         };
       };
     };
+  };
+
+  // Testimonial Functions
+
+  // Admin-only: Create testimonial
+  public shared ({ caller }) func createTestimonial(
+    clientName : Text,
+    quote : Text,
+    sport : ?Text,
+  ) : async Nat {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can create testimonials");
+    };
+
+    let id = nextTestimonialId;
+    nextTestimonialId += 1;
+
+    let testimonial : Testimonial = {
+      id;
+      clientName;
+      quote;
+      sport;
+      approved = false;
+      createdAt = Time.now();
+    };
+
+    testimonials.add(id, testimonial);
+    id;
+  };
+
+  // Admin-only: Update testimonial
+  public shared ({ caller }) func updateTestimonial(
+    id : Nat,
+    clientName : Text,
+    quote : Text,
+    sport : ?Text,
+  ) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can update testimonials");
+    };
+
+    switch (testimonials.get(id)) {
+      case (null) { Runtime.trap("Testimonial not found") };
+      case (?existing) {
+        let updated : Testimonial = {
+          id = id;
+          clientName;
+          quote;
+          sport;
+          approved = existing.approved;
+          createdAt = existing.createdAt;
+        };
+        testimonials.add(id, updated);
+      };
+    };
+  };
+
+  // Admin-only: Delete testimonial
+  public shared ({ caller }) func deleteTestimonial(id : Nat) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can delete testimonials");
+    };
+
+    switch (testimonials.get(id)) {
+      case (null) { Runtime.trap("Testimonial not found") };
+      case (?_) { testimonials.remove(id) };
+    };
+  };
+
+  // Admin-only: Toggle approval status
+  public shared ({ caller }) func toggleTestimonialApproval(id : Nat) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can toggle testimonial approval");
+    };
+
+    switch (testimonials.get(id)) {
+      case (null) { Runtime.trap("Testimonial not found") };
+      case (?t) {
+        let updated : Testimonial = {
+          id = t.id;
+          clientName = t.clientName;
+          quote = t.quote;
+          sport = t.sport;
+          approved = not t.approved;
+          createdAt = t.createdAt;
+        };
+        testimonials.add(id, updated);
+      };
+    };
+  };
+
+  // Public: Get approved testimonials
+  public query func getApprovedTestimonials() : async [Testimonial] {
+    let iter = testimonials.values();
+    iter.filter(func(t) { t.approved }).toArray();
+  };
+
+  // Admin-only: Get all testimonials
+  public query ({ caller }) func getAllTestimonials() : async [Testimonial] {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can view all testimonials");
+    };
+    let iter = testimonials.values();
+    iter.toArray();
+  };
+
+  // Admin-only: Get testimonial by ID
+  public query ({ caller }) func getTestimonial(id : Nat) : async ?Testimonial {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can view testimonials");
+    };
+    testimonials.get(id);
   };
 };

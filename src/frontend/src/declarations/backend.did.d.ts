@@ -67,6 +67,14 @@ export interface SessionDetails {
   'description' : string,
   'location' : string,
 }
+export interface Testimonial {
+  'id' : bigint,
+  'clientName' : string,
+  'createdAt' : Time,
+  'quote' : string,
+  'sport' : [] | [string],
+  'approved' : boolean,
+}
 export type Time = bigint;
 export interface UserProfile {
   'name' : string,
@@ -111,15 +119,22 @@ export interface _SERVICE {
   'createAlbum' : ActorMethod<[string, string, string, string, string], bigint>,
   'createBookingRequest' : ActorMethod<[ClientDetails, SessionDetails], bigint>,
   'createPortfolioItem' : ActorMethod<[string, string, string, string], bigint>,
+  'createTestimonial' : ActorMethod<[string, string, [] | [string]], bigint>,
   'deleteAlbum' : ActorMethod<[bigint], undefined>,
   'deletePortfolioItem' : ActorMethod<[bigint], undefined>,
+  'deleteTestimonial' : ActorMethod<[bigint], undefined>,
   'denyBooking' : ActorMethod<[bigint, string], undefined>,
   'getAllAlbums' : ActorMethod<[], Array<ClientAlbum>>,
   'getAllPortfolioItems' : ActorMethod<[], Array<PortfolioItem>>,
+  'getAllTestimonials' : ActorMethod<[], Array<Testimonial>>,
+  'getApprovedTestimonials' : ActorMethod<[], Array<Testimonial>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getHeroBackground' : ActorMethod<[], string>,
   'getPortfolioItem' : ActorMethod<[bigint], [] | [PortfolioItem]>,
   'getReminders' : ActorMethod<[], Array<[bigint, BookingRequest]>>,
+  'getTestimonial' : ActorMethod<[bigint], [] | [Testimonial]>,
+  'getUnavailableDates' : ActorMethod<[], Array<string>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'listAlbums' : ActorMethod<[], Array<PublicAlbumView>>,
@@ -129,6 +144,9 @@ export interface _SERVICE {
   'retrieveBookingRequest' : ActorMethod<[bigint], [] | [BookingRequest]>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'setBookingPrice' : ActorMethod<[bigint, bigint], undefined>,
+  'setHeroBackground' : ActorMethod<[string], undefined>,
+  'setUnavailableDates' : ActorMethod<[Array<string>], undefined>,
+  'toggleTestimonialApproval' : ActorMethod<[bigint], undefined>,
   'updateAlbum' : ActorMethod<
     [bigint, string, string, string, string, string],
     undefined
@@ -138,9 +156,11 @@ export interface _SERVICE {
     [bigint, string, string, string, string],
     undefined
   >,
-  'getUnavailableDates' : ActorMethod<[], Array<string>>,
-  'setUnavailableDates' : ActorMethod<[Array<string>], undefined>,
-    'verifyAlbumPassword' : ActorMethod<[bigint, string], [] | [Array<string>]>,
+  'updateTestimonial' : ActorMethod<
+    [bigint, string, string, [] | [string]],
+    undefined
+  >,
+  'verifyAlbumPassword' : ActorMethod<[bigint, string], [] | [Array<string>]>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

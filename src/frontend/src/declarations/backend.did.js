@@ -56,6 +56,14 @@ export const PortfolioItem = IDL.Record({
   'timestamp' : Time,
   'category' : IDL.Text,
 });
+export const Testimonial = IDL.Record({
+  'id' : IDL.Nat,
+  'clientName' : IDL.Text,
+  'createdAt' : Time,
+  'quote' : IDL.Text,
+  'sport' : IDL.Opt(IDL.Text),
+  'approved' : IDL.Bool,
+});
 export const UserProfile = IDL.Record({
   'name' : IDL.Text,
   'email' : IDL.Text,
@@ -139,19 +147,30 @@ export const idlService = IDL.Service({
       [IDL.Nat],
       [],
     ),
+  'createTestimonial' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [IDL.Nat],
+      [],
+    ),
   'deleteAlbum' : IDL.Func([IDL.Nat], [], []),
   'deletePortfolioItem' : IDL.Func([IDL.Nat], [], []),
+  'deleteTestimonial' : IDL.Func([IDL.Nat], [], []),
   'denyBooking' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'getAllAlbums' : IDL.Func([], [IDL.Vec(ClientAlbum)], ['query']),
   'getAllPortfolioItems' : IDL.Func([], [IDL.Vec(PortfolioItem)], ['query']),
+  'getAllTestimonials' : IDL.Func([], [IDL.Vec(Testimonial)], ['query']),
+  'getApprovedTestimonials' : IDL.Func([], [IDL.Vec(Testimonial)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getHeroBackground' : IDL.Func([], [IDL.Text], ['query']),
   'getPortfolioItem' : IDL.Func([IDL.Nat], [IDL.Opt(PortfolioItem)], ['query']),
   'getReminders' : IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(IDL.Nat, BookingRequest))],
       ['query'],
     ),
+  'getTestimonial' : IDL.Func([IDL.Nat], [IDL.Opt(Testimonial)], ['query']),
+  'getUnavailableDates' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
@@ -173,6 +192,9 @@ export const idlService = IDL.Service({
     ),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'setBookingPrice' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+  'setHeroBackground' : IDL.Func([IDL.Text], [], []),
+  'setUnavailableDates' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
+  'toggleTestimonialApproval' : IDL.Func([IDL.Nat], [], []),
   'updateAlbum' : IDL.Func(
       [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
       [],
@@ -181,6 +203,11 @@ export const idlService = IDL.Service({
   'updatePaymentStatus' : IDL.Func([IDL.Nat, PaymentStatus], [], []),
   'updatePortfolioItem' : IDL.Func(
       [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [],
+      [],
+    ),
+  'updateTestimonial' : IDL.Func(
+      [IDL.Nat, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
       [],
       [],
     ),
@@ -241,6 +268,14 @@ export const idlFactory = ({ IDL }) => {
     'imageUrl' : IDL.Text,
     'timestamp' : Time,
     'category' : IDL.Text,
+  });
+  const Testimonial = IDL.Record({
+    'id' : IDL.Nat,
+    'clientName' : IDL.Text,
+    'createdAt' : Time,
+    'quote' : IDL.Text,
+    'sport' : IDL.Opt(IDL.Text),
+    'approved' : IDL.Bool,
   });
   const UserProfile = IDL.Record({
     'name' : IDL.Text,
@@ -325,13 +360,22 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Nat],
         [],
       ),
+    'createTestimonial' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+        [IDL.Nat],
+        [],
+      ),
     'deleteAlbum' : IDL.Func([IDL.Nat], [], []),
     'deletePortfolioItem' : IDL.Func([IDL.Nat], [], []),
+    'deleteTestimonial' : IDL.Func([IDL.Nat], [], []),
     'denyBooking' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'getAllAlbums' : IDL.Func([], [IDL.Vec(ClientAlbum)], ['query']),
     'getAllPortfolioItems' : IDL.Func([], [IDL.Vec(PortfolioItem)], ['query']),
+    'getAllTestimonials' : IDL.Func([], [IDL.Vec(Testimonial)], ['query']),
+    'getApprovedTestimonials' : IDL.Func([], [IDL.Vec(Testimonial)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getHeroBackground' : IDL.Func([], [IDL.Text], ['query']),
     'getPortfolioItem' : IDL.Func(
         [IDL.Nat],
         [IDL.Opt(PortfolioItem)],
@@ -342,6 +386,8 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Nat, BookingRequest))],
         ['query'],
       ),
+    'getTestimonial' : IDL.Func([IDL.Nat], [IDL.Opt(Testimonial)], ['query']),
+    'getUnavailableDates' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
@@ -363,6 +409,9 @@ export const idlFactory = ({ IDL }) => {
       ),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'setBookingPrice' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+    'setHeroBackground' : IDL.Func([IDL.Text], [], []),
+    'setUnavailableDates' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
+    'toggleTestimonialApproval' : IDL.Func([IDL.Nat], [], []),
     'updateAlbum' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
         [],
@@ -374,9 +423,12 @@ export const idlFactory = ({ IDL }) => {
         [],
         [],
       ),
-    'getUnavailableDates' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
-    'setUnavailableDates' : IDL.Func([IDL.Vec(IDL.Text)], [], []),
-        'verifyAlbumPassword' : IDL.Func(
+    'updateTestimonial' : IDL.Func(
+        [IDL.Nat, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+        [],
+        [],
+      ),
+    'verifyAlbumPassword' : IDL.Func(
         [IDL.Nat, IDL.Text],
         [IDL.Opt(IDL.Vec(IDL.Text))],
         ['query'],

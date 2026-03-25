@@ -1,34 +1,42 @@
 # slr.pics
 
 ## Current State
-- App has a booking page at `/book` for sports sessions
-- The CTA bar has a "Check Availability" button that links to `/book` (wrong)
-- No dedicated availability page exists
-- Dashboard has no availability management section
+- Full-stack photography app with portfolio gallery, booking, client albums, availability calendar, and dashboard.
+- Portfolio grid links to detail pages; no lightbox.
+- Landing page has hero, features, featured work, and CTA section but no testimonials.
+- Booking confirmation page exists at /book/confirmation but only mentions email follow-up.
+- No watermark protection on portfolio images.
+- No testimonials section or management.
+- No Instagram feed/link section on landing page.
 
 ## Requested Changes (Diff)
 
 ### Add
-- New public page `/availability` showing a calendar of available/unavailable dates
-- New dashboard page `/dashboard/availability` to mark dates as available or unavailable
-- Backend functions: `getUnavailableDates()` (public query) and `setUnavailableDates(dates: [Text])` (admin only)
-- Dashboard card linking to availability manager in DashboardHomePage
+- **Gallery lightbox**: Clicking a portfolio photo in PortfolioGalleryPage opens a full-screen modal overlay showing the full image with prev/next navigation and close button. (No change to PortfolioDetailPage routing — gallery grid opens lightbox instead of navigating away).
+- **Watermark overlay**: CSS text watermark "slr.pics" displayed diagonally across all portfolio images in the gallery grid and lightbox to protect work. Semi-transparent, repeated pattern.
+- **Testimonials section on LandingPage**: Show approved testimonials between Featured Work and CTA. Backend-managed: photographer approves/hides testimonials from dashboard. Clients cannot submit — photographer adds them manually.
+- **Testimonials dashboard management**: New section in DashboardHomePage and a TestimonialsManagerPage at /dashboard/testimonials for adding, editing, approving, and deleting testimonials.
+- **Instagram section on LandingPage**: A styled "Follow Along" section near the bottom with a prominent link to https://www.instagram.com/_slr.pics_ and a visual call-to-action. No actual API embed — just a well-designed promotional block.
+- **Improved booking confirmation page**: Update text to reference phone/text/DM contact methods (matching the booking form options), include phone number 225-910-2426, and remove mention of "email" as the follow-up method.
 
 ### Modify
-- `PageCTABar.tsx`: Update "Check Availability" button to link to `/availability` instead of `/book`
-- `App.tsx`: Register new routes for `/availability` and `/dashboard/availability`
-- `DashboardHomePage.tsx`: Add "Availability" quick-action card
-- `backend/main.mo`: Add `unavailableDates` variable and getter/setter
-- `backend.did.d.ts` and `backend.did.js`: Add new method signatures
-- `useQueries.ts`: Add `useGetUnavailableDates` and `useSetUnavailableDates` hooks
+- `PortfolioGalleryPage`: Replace `<Link>` navigation with lightbox open handler for grid items.
+- `LandingPage`: Add testimonials section and Instagram section.
+- `BookingConfirmationPage`: Update contact info to reflect phone/text/DM options.
+- `DashboardHomePage`: Add Testimonials card.
+- `App.tsx`: Add /dashboard/testimonials route.
 
 ### Remove
-- Nothing removed
+- Nothing removed.
 
 ## Implementation Plan
-1. Add `unavailableDates` var to backend, with `getUnavailableDates` (public query) and `setUnavailableDates` (admin-only update)
-2. Update declarations and hooks
-3. Create `AvailabilityPage.tsx` — calendar UI, read-only for public, shows green (available) and red/gray (unavailable) days
-4. Create `AvailabilityManagerPage.tsx` — calendar UI for admin to click and toggle days unavailable/available, save button
-5. Add routes and dashboard card
-6. Fix CTA bar link
+1. Add Testimonial type and CRUD + approval backend methods via generate_motoko_code.
+2. Frontend: implement lightbox component with watermark overlay.
+3. Frontend: wire lightbox into PortfolioGalleryPage.
+4. Frontend: add testimonials section to LandingPage using useGetApprovedTestimonials query.
+5. Frontend: build TestimonialsManagerPage for dashboard.
+6. Frontend: add Testimonials card to DashboardHomePage.
+7. Frontend: add Instagram section to LandingPage.
+8. Frontend: update BookingConfirmationPage text.
+9. Frontend: add new queries/mutations for testimonials in useQueries.ts.
+10. Frontend: add /dashboard/testimonials route in App.tsx.

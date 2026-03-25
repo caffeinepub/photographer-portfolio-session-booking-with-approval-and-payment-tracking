@@ -45,6 +45,13 @@ export default function SiteHeader() {
               Portfolio
             </Link>
             <Link
+              to="/availability"
+              className="text-sm font-medium transition-colors hover:text-primary"
+              data-ocid="nav.link"
+            >
+              Check Availability
+            </Link>
+            <Link
               to="/photos"
               className="text-sm font-medium transition-colors hover:text-primary"
               data-ocid="nav.link"
@@ -114,6 +121,14 @@ export default function SiteHeader() {
               data-ocid="nav.link"
             >
               Portfolio
+            </Link>
+            <Link
+              to="/availability"
+              className="block text-sm font-medium transition-colors hover:text-primary"
+              onClick={() => setMobileMenuOpen(false)}
+              data-ocid="nav.link"
+            >
+              Check Availability
             </Link>
             <Link
               to="/photos"

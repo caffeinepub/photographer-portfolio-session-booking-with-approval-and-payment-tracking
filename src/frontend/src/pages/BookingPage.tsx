@@ -19,9 +19,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "@tanstack/react-router";
 import { Info, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { SESSION_TYPES } from "../constants/photographyOptions";
+import { SPORT_TYPES } from "../constants/photographyOptions";
 import { useCreateBookingRequest } from "../hooks/useQueries";
 
 export default function BookingPage() {
@@ -33,12 +33,21 @@ export default function BookingPage() {
     email: "",
     phone: "",
     additionalNotes: "",
-    sessionType: "",
+    sportType: "",
     location: "",
     description: "",
     date: "",
     time: "",
   });
+
+  // Pre-fill sport from URL query param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const sport = params.get("sport");
+    if (sport && SPORT_TYPES.some((s) => s.value === sport)) {
+      setFormData((prev) => ({ ...prev, sportType: sport }));
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,7 +55,7 @@ export default function BookingPage() {
     if (
       !formData.name ||
       !formData.email ||
-      !formData.sessionType ||
+      !formData.sportType ||
       !formData.date ||
       !formData.time
     ) {
@@ -54,10 +63,9 @@ export default function BookingPage() {
       return;
     }
 
-    if (!SESSION_TYPES.some((type) => type.value === formData.sessionType)) {
-      toast.error("Please select a valid session type (Sports or Concert)");
-      return;
-    }
+    const sportLabel =
+      SPORT_TYPES.find((s) => s.value === formData.sportType)?.label ??
+      formData.sportType;
 
     try {
       await createBooking.mutateAsync({
@@ -68,9 +76,9 @@ export default function BookingPage() {
           additionalNotes: formData.additionalNotes,
         },
         session: {
-          sessionType: formData.sessionType,
+          sessionType: "sports",
           location: formData.location,
-          description: formData.description,
+          description: `Sport: ${sportLabel}${formData.description ? ` | ${formData.description}` : ""}`,
           date: formData.date,
           time: formData.time,
         },
@@ -91,9 +99,12 @@ export default function BookingPage() {
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="font-serif text-5xl font-bold mb-4">Book Coverage</h1>
+          <h1 className="font-serif text-5xl font-bold mb-4">
+            Book a Sports Session
+          </h1>
           <p className="text-muted-foreground text-lg">
-            Request sports or concert photography coverage for your event
+            Request sports photography coverage for your game, match, or
+            tournament
           </p>
         </div>
 
@@ -109,8 +120,7 @@ export default function BookingPage() {
           <CardHeader>
             <CardTitle>Coverage Details</CardTitle>
             <CardDescription>
-              Tell us about your sports event or concert and we'll get back to
-              you soon
+              Tell us about your sports event and we'll get back to you soon
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -123,6 +133,7 @@ export default function BookingPage() {
                     <Label htmlFor="name">Full Name *</Label>
                     <Input
                       id="name"
+                      data-ocid="booking.input"
                       value={formData.name}
                       onChange={(e) => updateField("name", e.target.value)}
                       placeholder="John Doe"
@@ -133,6 +144,7 @@ export default function BookingPage() {
                     <Label htmlFor="email">Email *</Label>
                     <Input
                       id="email"
+                      data-ocid="booking.input"
                       type="email"
                       value={formData.email}
                       onChange={(e) => updateField("email", e.target.value)}
@@ -145,6 +157,7 @@ export default function BookingPage() {
                   <Label htmlFor="phone">Phone Number</Label>
                   <Input
                     id="phone"
+                    data-ocid="booking.input"
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => updateField("phone", e.target.value)}
@@ -156,19 +169,20 @@ export default function BookingPage() {
               {/* Session Details */}
               <div className="space-y-4 pt-6 border-t">
                 <h3 className="font-semibold text-lg">Coverage Details</h3>
+
                 <div className="space-y-2">
-                  <Label htmlFor="sessionType">Coverage Type *</Label>
+                  <Label htmlFor="sportType">Sport *</Label>
                   <Select
-                    value={formData.sessionType}
-                    onValueChange={(value) => updateField("sessionType", value)}
+                    value={formData.sportType}
+                    onValueChange={(value) => updateField("sportType", value)}
                   >
-                    <SelectTrigger id="sessionType">
-                      <SelectValue placeholder="Select coverage type" />
+                    <SelectTrigger id="sportType" data-ocid="booking.select">
+                      <SelectValue placeholder="Select a sport" />
                     </SelectTrigger>
                     <SelectContent>
-                      {SESSION_TYPES.map((type) => (
-                        <SelectItem key={type.value} value={type.value}>
-                          {type.label}
+                      {SPORT_TYPES.map((sport) => (
+                        <SelectItem key={sport.value} value={sport.value}>
+                          {sport.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -180,6 +194,7 @@ export default function BookingPage() {
                     <Label htmlFor="date">Event Date *</Label>
                     <Input
                       id="date"
+                      data-ocid="booking.input"
                       type="date"
                       value={formData.date}
                       onChange={(e) => updateField("date", e.target.value)}
@@ -190,6 +205,7 @@ export default function BookingPage() {
                     <Label htmlFor="time">Event Time *</Label>
                     <Input
                       id="time"
+                      data-ocid="booking.input"
                       type="time"
                       value={formData.time}
                       onChange={(e) => updateField("time", e.target.value)}
@@ -202,9 +218,10 @@ export default function BookingPage() {
                   <Label htmlFor="location">Venue/Location</Label>
                   <Input
                     id="location"
+                    data-ocid="booking.input"
                     value={formData.location}
                     onChange={(e) => updateField("location", e.target.value)}
-                    placeholder="Stadium, arena, or venue name"
+                    placeholder="Stadium, arena, or field name"
                   />
                 </div>
 
@@ -212,9 +229,10 @@ export default function BookingPage() {
                   <Label htmlFor="description">Event Description</Label>
                   <Textarea
                     id="description"
+                    data-ocid="booking.textarea"
                     value={formData.description}
                     onChange={(e) => updateField("description", e.target.value)}
-                    placeholder="Tell us about the game, match, tournament, concert, or performance..."
+                    placeholder="Tell us about the game, match, or tournament..."
                     rows={4}
                   />
                 </div>
@@ -223,6 +241,7 @@ export default function BookingPage() {
                   <Label htmlFor="additionalNotes">Additional Notes</Label>
                   <Textarea
                     id="additionalNotes"
+                    data-ocid="booking.textarea"
                     value={formData.additionalNotes}
                     onChange={(e) =>
                       updateField("additionalNotes", e.target.value)
@@ -235,6 +254,7 @@ export default function BookingPage() {
 
               <Button
                 type="submit"
+                data-ocid="booking.submit_button"
                 disabled={createBooking.isPending}
                 className="w-full"
                 size="lg"

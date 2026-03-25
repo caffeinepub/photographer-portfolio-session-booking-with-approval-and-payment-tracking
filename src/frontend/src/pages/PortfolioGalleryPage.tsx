@@ -1,10 +1,55 @@
 import { Badge } from "@/components/ui/badge";
-import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useGetAllPortfolioItems } from "../hooks/useQueries";
+
+const TABS = [
+  { id: "baseball", label: "Baseball", category: "sports", sport: "baseball" },
+  {
+    id: "basketball",
+    label: "Basketball",
+    category: "sports",
+    sport: "basketball",
+  },
+  { id: "football", label: "Football", category: "sports", sport: "football" },
+  {
+    id: "concert",
+    label: "Boots on the Bayou",
+    category: "concert",
+    sport: null,
+  },
+] as const;
+
+type TabId = (typeof TABS)[number]["id"];
 
 export default function PortfolioGalleryPage() {
   const { data: portfolioItems = [], isLoading } = useGetAllPortfolioItems();
+  const [activeTab, setActiveTab] = useState<TabId | "all">("all");
+  const navigate = useNavigate();
+
+  const filteredItems = (() => {
+    if (activeTab === "all") return portfolioItems;
+    const tab = TABS.find((t) => t.id === activeTab);
+    if (!tab) return portfolioItems;
+    if (tab.category === "concert") {
+      return portfolioItems.filter((item) => item.category === "concert");
+    }
+    // Sports tab: filter by sport keyword in title, or fall back to all sports
+    const bySport = portfolioItems.filter(
+      (item) =>
+        item.category === "sports" &&
+        item.title.toLowerCase().includes(tab.sport!),
+    );
+    return bySport.length > 0
+      ? bySport
+      : portfolioItems.filter((item) => item.category === "sports");
+  })();
+
+  const activeTabData = TABS.find((t) => t.id === activeTab);
+  const showBookButton =
+    activeTab !== "all" && activeTabData && activeTabData.category === "sports";
 
   if (isLoading) {
     return (
@@ -20,27 +65,76 @@ export default function PortfolioGalleryPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <h1 className="font-serif text-5xl font-bold mb-4">Portfolio</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Explore our collection of sports action on the field and court, plus
-            electrifying concert moments from live performances
+            Explore sports action and concert moments captured through the lens
           </p>
         </div>
 
-        {portfolioItems.length === 0 ? (
-          <div className="text-center py-16">
+        {/* Tab Pills */}
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          <button
+            type="button"
+            data-ocid="portfolio.tab"
+            onClick={() => setActiveTab("all")}
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-all border ${
+              activeTab === "all"
+                ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+            }`}
+          >
+            All
+          </button>
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              data-ocid="portfolio.tab"
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all border ${
+                activeTab === tab.id
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Book Session Button for sports tabs */}
+        {showBookButton && activeTabData && (
+          <div className="flex justify-center mb-8">
+            <Button
+              data-ocid="portfolio.primary_button"
+              onClick={() =>
+                navigate({
+                  to: "/book",
+                  search: { sport: activeTabData.sport! } as any,
+                })
+              }
+              size="lg"
+            >
+              Book a {activeTabData.label} Session
+            </Button>
+          </div>
+        )}
+
+        {filteredItems.length === 0 ? (
+          <div className="text-center py-16" data-ocid="portfolio.empty_state">
             <p className="text-muted-foreground text-lg">
-              No portfolio items yet. Check back soon!
+              No photos in this category yet. Check back soon!
             </p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {portfolioItems.map((item) => (
+            {filteredItems.map((item, idx) => (
               <Link
                 key={item.id.toString()}
                 to="/portfolio/$id"
                 params={{ id: item.id.toString() }}
+                data-ocid={`portfolio.item.${idx + 1}`}
                 className="group relative aspect-[4/5] overflow-hidden rounded-sm shadow-elegant hover:shadow-elegant-lg transition-all duration-300"
               >
                 <img

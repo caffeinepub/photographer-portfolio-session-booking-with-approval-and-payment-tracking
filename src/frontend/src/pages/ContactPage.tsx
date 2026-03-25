@@ -1,5 +1,5 @@
 import { CONTACT_INFO } from "@/constants/contactInfo";
-import { Mail } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
 
 export default function ContactPage() {
@@ -7,14 +7,25 @@ export default function ContactPage() {
     <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         <div className="max-w-2xl mx-auto">
+          {/* Profile Picture */}
+          <div className="flex justify-center mb-8">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+              <img
+                src="/assets/generated/photographer-logo-slr-pics.dim_512x512.png"
+                alt="slr.pics photographer"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
               Get in Touch
             </h1>
             <p className="text-lg text-muted-foreground">
-              Ready to capture your next sports event or concert? Let's connect
-              and discuss how we can bring your vision to life.
+              Ready to capture your next sports event? Let's connect and discuss
+              how we can bring your vision to life.
             </p>
           </div>
 
@@ -32,8 +43,40 @@ export default function ContactPage() {
 
           {/* Contact Cards */}
           <div className="space-y-6">
+            {/* Phone Card */}
+            <a
+              href={`tel:${CONTACT_INFO.phone}`}
+              className="block group"
+              data-ocid="contact.link"
+            >
+              <div className="bg-card border rounded-xl p-8 transition-all hover:shadow-lg hover:border-primary/50">
+                <div className="flex items-start space-x-4">
+                  <div className="shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Phone className="h-6 w-6 text-primary" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                      Phone
+                    </h2>
+                    <p className="text-muted-foreground mb-3">
+                      Call or text me directly to discuss your shoot.
+                    </p>
+                    <p className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">
+                      {CONTACT_INFO.phone}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </a>
+
             {/* Email Card */}
-            <a href={`mailto:${CONTACT_INFO.email}`} className="block group">
+            <a
+              href={`mailto:${CONTACT_INFO.email}`}
+              className="block group"
+              data-ocid="contact.link"
+            >
               <div className="bg-card border rounded-xl p-8 transition-all hover:shadow-lg hover:border-primary/50">
                 <div className="flex items-start space-x-4">
                   <div className="shrink-0">
@@ -63,6 +106,7 @@ export default function ContactPage() {
               target="_blank"
               rel="noopener noreferrer"
               className="block group"
+              data-ocid="contact.link"
             >
               <div className="bg-card border rounded-xl p-8 transition-all hover:shadow-lg hover:border-primary/50">
                 <div className="flex items-start space-x-4">
@@ -93,6 +137,7 @@ export default function ContactPage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block group"
+                data-ocid="contact.link"
               >
                 <div className="bg-card border rounded-xl p-8 transition-all hover:shadow-lg hover:border-primary/50">
                   <div className="flex items-start space-x-4">

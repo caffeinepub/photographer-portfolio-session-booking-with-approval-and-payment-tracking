@@ -31,8 +31,8 @@ export default function LandingPage() {
             className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/90 animate-fade-in"
             style={{ animationDelay: "0.1s" }}
           >
-            Professional sports and concert photography that captures the
-            intensity of the game and the energy of live music
+            Professional sports photography that captures the intensity of the
+            game — from the field to the court
           </p>
           <div
             className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
@@ -66,7 +66,7 @@ export default function LandingPage() {
               </h3>
               <p className="text-muted-foreground">
                 High-speed equipment and techniques to freeze every decisive
-                moment on the field or stage
+                moment on the field or court
               </p>
             </div>
             <div className="text-center space-y-4">
@@ -74,11 +74,11 @@ export default function LandingPage() {
                 <Calendar className="h-8 w-8" />
               </div>
               <h3 className="font-serif text-xl font-semibold">
-                Event Coverage
+                Sports Event Coverage
               </h3>
               <p className="text-muted-foreground">
-                Comprehensive coverage for games, tournaments, concerts, and
-                live performances
+                Comprehensive coverage for games, tournaments, and athletic
+                competitions
               </p>
             </div>
             <div className="text-center space-y-4">
@@ -90,7 +90,7 @@ export default function LandingPage() {
               </h3>
               <p className="text-muted-foreground">
                 Powerful images that capture the emotion, intensity, and
-                atmosphere of your event
+                atmosphere of every game
               </p>
             </div>
           </div>
@@ -106,7 +106,7 @@ export default function LandingPage() {
                 Featured Work
               </h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Recent sports action and concert moments captured
+                Recent sports action moments captured through the lens
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -146,11 +146,11 @@ export default function LandingPage() {
       <section className="py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-4xl font-bold mb-4">
-            Ready to Book Your Coverage?
+            Ready to Book Your Sports Coverage?
           </h2>
           <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
-            Let's capture the action together. Book your sports or concert
-            photography coverage today.
+            Let's capture the action together. Book your sports photography
+            coverage for your next game or tournament.
           </p>
           <Button asChild size="lg" variant="secondary">
             <Link to="/book">Get Started</Link>

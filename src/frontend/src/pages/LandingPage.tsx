@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "@tanstack/react-router";
-import { Award, Calendar, Camera, CheckCircle, Quote } from "lucide-react";
+import { CheckCircle, Quote } from "lucide-react";
 import { useState } from "react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
 import { toast } from "sonner";
@@ -69,22 +69,16 @@ export default function LandingPage() {
         </div>
 
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
-          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 tracking-tight animate-fade-in">
+          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6 tracking-tight">
             Action & Energy,
             <br />
             Captured in Motion
           </h1>
-          <p
-            className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/90 animate-fade-in"
-            style={{ animationDelay: "0.1s" }}
-          >
-            Professional sports photography that captures the intensity of the
-            game — from the field to the court
+          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/80">
+            Sports photography that captures the intensity of the game — from
+            the field to the court.
           </p>
-          <div
-            className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
-            style={{ animationDelay: "0.2s" }}
-          >
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button asChild size="lg" className="text-base">
               <Link to="/portfolio">View Portfolio</Link>
             </Button>
@@ -92,7 +86,7 @@ export default function LandingPage() {
               asChild
               size="lg"
               variant="outline"
-              className="text-base bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              className="text-base bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
             >
               <Link to="/book">Book Coverage</Link>
             </Button>
@@ -100,45 +94,44 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-20 bg-muted/30">
+      {/* What I do — simple text rows */}
+      <section className="py-16 border-b border-border">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="text-center space-y-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary">
-                <Camera className="h-8 w-8" />
-              </div>
-              <h3 className="font-serif text-xl font-semibold">
-                Fast-Action Expertise
-              </h3>
-              <p className="text-muted-foreground">
-                High-speed equipment and techniques to freeze every decisive
-                moment on the field or court
-              </p>
-            </div>
-            <div className="text-center space-y-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary">
-                <Calendar className="h-8 w-8" />
-              </div>
-              <h3 className="font-serif text-xl font-semibold">
-                Sports Event Coverage
-              </h3>
-              <p className="text-muted-foreground">
-                Comprehensive coverage for games, tournaments, and athletic
-                competitions
-              </p>
-            </div>
-            <div className="text-center space-y-4">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary">
-                <Award className="h-8 w-8" />
-              </div>
-              <h3 className="font-serif text-xl font-semibold">
-                Dynamic Results
-              </h3>
-              <p className="text-muted-foreground">
-                Powerful images that capture the emotion, intensity, and
-                atmosphere of every game
-              </p>
+          <div className="max-w-3xl mx-auto">
+            <p className="text-xs font-medium tracking-widest uppercase text-muted-foreground mb-8">
+              Specialties
+            </p>
+            <div className="divide-y divide-border">
+              {[
+                {
+                  label: "Baseball",
+                  desc: "Game coverage, action shots, portraits",
+                },
+                {
+                  label: "Basketball",
+                  desc: "Court-side action and highlight moments",
+                },
+                {
+                  label: "Football",
+                  desc: "Full game coverage from sideline to end zone",
+                },
+                {
+                  label: "Concerts",
+                  desc: "Live music and stage energy at Boots on the Bayou",
+                },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  className="flex items-baseline justify-between py-4 gap-8"
+                >
+                  <span className="font-serif text-xl font-semibold">
+                    {item.label}
+                  </span>
+                  <span className="text-sm text-muted-foreground text-right">
+                    {item.desc}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -148,15 +141,13 @@ export default function LandingPage() {
       {featuredItems.length > 0 && (
         <section className="py-20">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="font-serif text-4xl font-bold mb-4">
-                Featured Work
-              </h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Recent sports action moments captured through the lens
+            <div className="mb-10">
+              <p className="text-xs font-medium tracking-widest uppercase text-muted-foreground mb-3">
+                Portfolio
               </p>
+              <h2 className="font-serif text-4xl font-bold">Featured Work</h2>
             </div>
-            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-4 max-w-6xl">
               {featuredItems.map((item) => (
                 <Link
                   key={item.id.toString()}
@@ -179,7 +170,7 @@ export default function LandingPage() {
                 </Link>
               ))}
             </div>
-            <div className="text-center mt-12">
+            <div className="mt-10">
               <Button asChild variant="outline" size="lg">
                 <Link to="/portfolio">View Full Portfolio</Link>
               </Button>
@@ -192,23 +183,23 @@ export default function LandingPage() {
       {testimonials.length > 0 && (
         <section className="py-20 bg-muted/30">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="font-serif text-4xl font-bold mb-4">
+            <div className="mb-10">
+              <p className="text-xs font-medium tracking-widest uppercase text-muted-foreground mb-3">
+                Reviews
+              </p>
+              <h2 className="font-serif text-4xl font-bold">
                 What Clients Say
               </h2>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Stories from athletes, teams, and event organizers
-              </p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
               {testimonials.map((t, i) => (
                 <Card
                   key={t.id.toString()}
                   data-ocid={`testimonials.item.${i + 1}`}
-                  className="relative"
+                  className="relative border-border"
                 >
                   <CardContent className="pt-8 pb-6 px-6">
-                    <Quote className="absolute top-4 left-4 h-6 w-6 text-primary/30" />
+                    <Quote className="absolute top-4 left-4 h-5 w-5 text-muted-foreground/30" />
                     <p className="text-foreground/80 leading-relaxed mb-6 italic">
                       &ldquo;{t.quote}&rdquo;
                     </p>
@@ -233,11 +224,14 @@ export default function LandingPage() {
       {/* Submit a Review */}
       <section id="leave-review" className="py-20 bg-[#0a0a0a]">
         <div className="container mx-auto px-4 max-w-xl">
-          <div className="text-center mb-8">
-            <h2 className="font-serif text-3xl font-bold text-white mb-3">
+          <div className="mb-8">
+            <p className="text-xs font-medium tracking-widest uppercase text-white/40 mb-3">
+              Reviews
+            </p>
+            <h2 className="font-serif text-3xl font-bold text-white">
               Share Your Experience
             </h2>
-            <p className="text-white/50 text-sm">
+            <p className="text-white/50 text-sm mt-2">
               Worked with Slade? Leave a review — it will appear on the site
               once approved.
             </p>
@@ -324,13 +318,13 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <section className="py-20 bg-primary text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-4">
           <h2 className="font-serif text-4xl font-bold mb-4">
             Ready to Book Your Sports Coverage?
           </h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
-            Let's capture the action together. Book your sports photography
-            coverage for your next game or tournament.
+          <p className="text-lg mb-8 max-w-xl opacity-90">
+            Sports sessions starting at $20. Book your coverage for your next
+            game or tournament.
           </p>
           <Button asChild size="lg" variant="secondary">
             <Link to="/book">Get Started</Link>
@@ -345,7 +339,7 @@ export default function LandingPage() {
             Follow Along
           </h2>
           <p className="text-white/50 mb-10 max-w-lg mx-auto">
-            Stay up to date with the latest shots and behind-the-scenes moments
+            Latest shots and behind-the-scenes moments
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <a
@@ -372,21 +366,6 @@ export default function LandingPage() {
               <SiTiktok className="h-5 w-5" />
               Follow on TikTok
             </a>
-          </div>
-          <div className="flex items-center justify-center gap-8 mt-10">
-            <div className="text-center">
-              <p className="text-white/40 text-xs uppercase tracking-widest mb-1">
-                Instagram
-              </p>
-              <p className="text-white/70 text-sm font-medium">@_slr.pics_</p>
-            </div>
-            <div className="w-px h-8 bg-white/10" />
-            <div className="text-center">
-              <p className="text-white/40 text-xs uppercase tracking-widest mb-1">
-                TikTok
-              </p>
-              <p className="text-white/70 text-sm font-medium">@_slr.pics_</p>
-            </div>
           </div>
         </div>
       </section>

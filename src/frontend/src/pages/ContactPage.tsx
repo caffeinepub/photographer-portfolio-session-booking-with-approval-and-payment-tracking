@@ -6,175 +6,101 @@ import { SiInstagram, SiTiktok } from "react-icons/si";
 export default function ContactPage() {
   return (
     <div>
-      <div className="min-h-[calc(100vh-4rem)] bg-gradient-to-b from-background to-muted/20">
+      <div className="min-h-[calc(100vh-4rem)]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-          <div className="max-w-2xl mx-auto">
-            {/* Profile Picture */}
-            <div className="flex justify-center mb-8">
-              <div className="w-32 h-32 rounded-full overflow-hidden shadow-lg">
-                <img
-                  src="/assets/uploads/photographer_capturing_the_concert_scene-019d2741-8072-756a-ae31-939ae4e01812-1.png"
-                  alt="slr.pics photographer"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-
+          <div className="max-w-xl mx-auto">
             {/* Header */}
-            <div className="text-center mb-12">
-              <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
-                Get in Touch
-              </h1>
-              <p className="text-lg text-muted-foreground">
-                Ready to capture your next sports event? Let's connect and
-                discuss how we can bring your vision to life.
+            <div className="mb-14">
+              <p className="text-xs font-medium tracking-widest uppercase text-muted-foreground mb-4">
+                slr.pics
               </p>
+              <h1 className="font-serif text-5xl md:text-6xl font-bold tracking-tight">
+                Contact
+              </h1>
             </div>
 
-            {/* About Section */}
-            <div className="mb-12">
-              <div className="bg-card border rounded-xl p-8">
-                <h2 className="font-serif text-2xl font-semibold mb-4">
-                  About the Photographer
-                </h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  {CONTACT_INFO.bio}
-                </p>
-              </div>
-            </div>
-
-            {/* Contact Cards */}
-            <div className="space-y-6">
-              {/* Phone Card */}
+            {/* Contact List */}
+            <div className="divide-y divide-border">
+              {/* Phone */}
               <a
                 href={`tel:${CONTACT_INFO.phone}`}
-                className="block group"
+                className="group flex items-center justify-between py-5 hover:text-primary transition-colors"
                 data-ocid="contact.link"
               >
-                <div className="bg-card border rounded-xl p-8 transition-all hover:shadow-lg hover:border-primary/50">
-                  <div className="flex items-start space-x-4">
-                    <div className="shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <Phone className="h-6 w-6 text-primary" />
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                        Phone
-                      </h2>
-                      <p className="text-muted-foreground mb-3">
-                        Call or text me directly to discuss your shoot.
-                      </p>
-                      <p className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">
-                        {CONTACT_INFO.phone}
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-4">
+                  <Phone className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                  <span className="text-sm text-muted-foreground">Phone</span>
                 </div>
+                <span className="font-medium text-sm">
+                  {CONTACT_INFO.phone}
+                </span>
               </a>
 
-              {/* Email Card */}
+              {/* Email */}
               <a
                 href={`mailto:${CONTACT_INFO.email}`}
-                className="block group"
+                className="group flex items-center justify-between py-5 hover:text-primary transition-colors"
                 data-ocid="contact.link"
               >
-                <div className="bg-card border rounded-xl p-8 transition-all hover:shadow-lg hover:border-primary/50">
-                  <div className="flex items-start space-x-4">
-                    <div className="shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <Mail className="h-6 w-6 text-primary" />
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                        Email
-                      </h2>
-                      <p className="text-muted-foreground mb-3">
-                        Send me a message and I'll get back to you within 24
-                        hours.
-                      </p>
-                      <p className="text-lg font-medium text-foreground group-hover:text-primary transition-colors break-all">
-                        {CONTACT_INFO.email}
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-4">
+                  <Mail className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                  <span className="text-sm text-muted-foreground">Email</span>
                 </div>
+                <span className="font-medium text-sm break-all text-right">
+                  {CONTACT_INFO.email}
+                </span>
               </a>
 
-              {/* Instagram Card */}
+              {/* Instagram */}
               <a
                 href={CONTACT_INFO.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block group"
+                className="group flex items-center justify-between py-5 hover:text-primary transition-colors"
                 data-ocid="contact.link"
               >
-                <div className="bg-card border rounded-xl p-8 transition-all hover:shadow-lg hover:border-primary/50">
-                  <div className="flex items-start space-x-4">
-                    <div className="shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <SiInstagram className="h-6 w-6 text-primary" />
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                        Instagram
-                      </h2>
-                      <p className="text-muted-foreground mb-3">
-                        Follow me for behind-the-scenes content and latest work.
-                      </p>
-                      <p className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">
-                        {CONTACT_INFO.instagram.handle}
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-4">
+                  <SiInstagram className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                  <span className="text-sm text-muted-foreground">
+                    Instagram
+                  </span>
                 </div>
+                <span className="font-medium text-sm">
+                  {CONTACT_INFO.instagram.handle}
+                </span>
               </a>
 
-              {/* TikTok Card */}
+              {/* TikTok */}
               {CONTACT_INFO.tiktok?.url && CONTACT_INFO.tiktok?.handle && (
                 <a
                   href={CONTACT_INFO.tiktok.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block group"
+                  className="group flex items-center justify-between py-5 hover:text-primary transition-colors"
                   data-ocid="contact.link"
                 >
-                  <div className="bg-card border rounded-xl p-8 transition-all hover:shadow-lg hover:border-primary/50">
-                    <div className="flex items-start space-x-4">
-                      <div className="shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                          <SiTiktok className="h-6 w-6 text-primary" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
-                          TikTok
-                        </h2>
-                        <p className="text-muted-foreground mb-3">
-                          Check out my short-form content and creative
-                          highlights.
-                        </p>
-                        <p className="text-lg font-medium text-foreground group-hover:text-primary transition-colors">
-                          {CONTACT_INFO.tiktok.handle}
-                        </p>
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-4">
+                    <SiTiktok className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                    <span className="text-sm text-muted-foreground">
+                      TikTok
+                    </span>
                   </div>
+                  <span className="font-medium text-sm">
+                    {CONTACT_INFO.tiktok.handle}
+                  </span>
                 </a>
               )}
             </div>
 
-            {/* Additional Info */}
-            <div className="mt-12 text-center">
-              <p className="text-muted-foreground">
-                Looking to book a session?{" "}
+            {/* Book link */}
+            <div className="mt-12 pt-8 border-t border-border">
+              <p className="text-sm text-muted-foreground">
+                Ready to book?{" "}
                 <a
                   href="/book"
-                  className="text-primary font-medium hover:underline"
+                  className="text-foreground font-medium underline underline-offset-4 hover:text-primary transition-colors"
                 >
-                  Visit our booking page
+                  Visit the booking page
                 </a>
               </p>
             </div>

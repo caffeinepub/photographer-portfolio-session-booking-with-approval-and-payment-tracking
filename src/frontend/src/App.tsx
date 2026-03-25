@@ -11,6 +11,7 @@ import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import AdminRoute from "./components/auth/AdminRoute";
 import AppLayout from "./components/layout/AppLayout";
+import AboutPage from "./pages/AboutPage";
 import AvailabilityPage from "./pages/AvailabilityPage";
 import BookingConfirmationPage from "./pages/BookingConfirmationPage";
 import BookingPage from "./pages/BookingPage";
@@ -82,6 +83,12 @@ const contactRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/contact",
   component: ContactPage,
+});
+
+const aboutRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/about",
+  component: AboutPage,
 });
 
 const photosRoute = createRoute({
@@ -173,6 +180,7 @@ const routeTree = rootRoute.addChildren([
   bookingRoute,
   bookingConfirmationRoute,
   contactRoute,
+  aboutRoute,
   photosRoute,
   availabilityRoute,
   dashboardRoute,

@@ -66,6 +66,13 @@ export default function SiteHeader() {
               Book Coverage
             </Link>
             <Link
+              to="/about"
+              className="text-sm font-medium transition-colors hover:text-primary"
+              data-ocid="nav.link"
+            >
+              About
+            </Link>
+            <Link
               to="/contact"
               className="text-sm font-medium transition-colors hover:text-primary"
               data-ocid="nav.link"
@@ -145,6 +152,14 @@ export default function SiteHeader() {
               data-ocid="nav.link"
             >
               Book Coverage
+            </Link>
+            <Link
+              to="/about"
+              className="block text-sm font-medium transition-colors hover:text-primary"
+              onClick={() => setMobileMenuOpen(false)}
+              data-ocid="nav.link"
+            >
+              About
             </Link>
             <Link
               to="/contact"

@@ -13,7 +13,7 @@ export default function ContactPage() {
             <div className="flex justify-center mb-8">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
                 <img
-                  src="/assets/generated/photographer-logo-slr-pics.dim_512x512.png"
+                  src={CONTACT_INFO.profilePicture}
                   alt="slr.pics photographer"
                   className="w-full h-full object-cover"
                 />

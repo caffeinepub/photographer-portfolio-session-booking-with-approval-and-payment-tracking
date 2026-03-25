@@ -111,6 +111,21 @@ actor {
   var nextAlbumId : Nat = 0;
   let scheduledReminders = List.empty<(Nat, BookingRequest)>();
 
+  // Hero Background URL (settable by admin)
+  var heroBackgroundUrl : Text = "";
+
+  // Hero Background Functions
+  public query func getHeroBackground() : async Text {
+    heroBackgroundUrl;
+  };
+
+  public shared ({ caller }) func setHeroBackground(url : Text) : async () {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only photographer can set hero background");
+    };
+    heroBackgroundUrl := url;
+  };
+
   // User Profile Functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {

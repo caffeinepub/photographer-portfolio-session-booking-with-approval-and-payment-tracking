@@ -94,6 +94,7 @@ export interface backendInterface {
     getAllPortfolioItems(): Promise<Array<PortfolioItem>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getHeroBackground(): Promise<string>;
     getPortfolioItem(id: bigint): Promise<PortfolioItem | null>;
     getReminders(): Promise<Array<[bigint, BookingRequest]>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
@@ -105,6 +106,7 @@ export interface backendInterface {
     retrieveBookingRequest(id: bigint): Promise<BookingRequest | null>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     setBookingPrice(id: bigint, price: bigint): Promise<void>;
+    setHeroBackground(url: string): Promise<void>;
     updateAlbum(id: bigint, name: string, clientName: string, description: string, password: string, coverPhotoUrl: string): Promise<void>;
     updatePaymentStatus(id: bigint, status: PaymentStatus): Promise<void>;
     updatePortfolioItem(id: bigint, title: string, description: string, imageUrl: string, category: string): Promise<void>;

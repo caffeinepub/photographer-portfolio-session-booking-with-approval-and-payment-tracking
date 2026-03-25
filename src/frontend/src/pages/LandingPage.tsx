@@ -1,11 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { Award, Calendar, Camera } from "lucide-react";
-import { useGetAllPortfolioItems } from "../hooks/useQueries";
+import {
+  useGetAllPortfolioItems,
+  useGetHeroBackground,
+} from "../hooks/useQueries";
 
 export default function LandingPage() {
   const { data: portfolioItems = [] } = useGetAllPortfolioItems();
+  const { data: heroBackground = "" } = useGetHeroBackground();
   const featuredItems = portfolioItems.slice(0, 3);
+
+  const heroBg =
+    heroBackground ||
+    "/assets/generated/photography-hero-sports-concert.dim_1920x1080.png";
 
   return (
     <div className="flex flex-col">
@@ -14,8 +22,7 @@ export default function LandingPage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage:
-              "url(/assets/generated/photography-hero-sports-concert.dim_1920x1080.png)",
+            backgroundImage: `url(${heroBg})`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-background" />

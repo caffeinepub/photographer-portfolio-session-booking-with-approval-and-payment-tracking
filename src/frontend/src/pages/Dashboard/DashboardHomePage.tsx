@@ -15,14 +15,21 @@ import {
   Clock,
   FolderOpen,
   Image,
+  Loader2,
   Rocket,
+  Upload,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import ProfileSetupModal from "../../components/auth/ProfileSetupModal";
 import { useInternetIdentity } from "../../hooks/useInternetIdentity";
-import { useGetAllBookingRequests } from "../../hooks/useQueries";
-import { useGetCallerUserProfile } from "../../hooks/useQueries";
+import {
+  useGetAllBookingRequests,
+  useGetCallerUserProfile,
+  useGetHeroBackground,
+  useSetHeroBackground,
+} from "../../hooks/useQueries";
+import { processImageFile } from "../../utils/imageDataUrl";
 import { validateHostname } from "../../utils/validateHostname";
 
 export default function DashboardHomePage() {
@@ -33,10 +40,13 @@ export default function DashboardHomePage() {
     isLoading: profileLoading,
     isFetched,
   } = useGetCallerUserProfile();
+  const { data: heroBackground = "" } = useGetHeroBackground();
+  const setHeroBackground = useSetHeroBackground();
 
   const [customDomain, setCustomDomain] = useState("slr.pics");
   const [isPublishing, setIsPublishing] = useState(false);
   const [domainError, setDomainError] = useState<string | null>(null);
+  const bgFileRef = useRef<HTMLInputElement>(null);
 
   const isAuthenticated = !!identity;
   const showProfileSetup =
@@ -70,6 +80,20 @@ export default function DashboardHomePage() {
       console.error("Publish error:", err);
     } finally {
       setIsPublishing(false);
+    }
+  };
+
+  const handleBgFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await processImageFile(file);
+      await setHeroBackground.mutateAsync(dataUrl);
+      toast.success("Background updated");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to update background");
+    } finally {
+      if (bgFileRef.current) bgFileRef.current.value = "";
     }
   };
 
@@ -133,6 +157,64 @@ export default function DashboardHomePage() {
                   </>
                 )}
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Home Background Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Image className="h-5 w-5" />
+                Home Background Photo
+              </CardTitle>
+              <CardDescription>
+                Upload a photo to use as the hero background on the home page
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {heroBackground && (
+                <div className="rounded-lg overflow-hidden border">
+                  <img
+                    src={heroBackground}
+                    alt="Current home background"
+                    className="w-full max-h-48 object-cover"
+                  />
+                </div>
+              )}
+              <input
+                ref={bgFileRef}
+                type="file"
+                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                className="hidden"
+                onChange={handleBgFileChange}
+                data-ocid="home_bg.upload_button"
+              />
+              <Button
+                onClick={() => bgFileRef.current?.click()}
+                disabled={setHeroBackground.isPending}
+                variant="outline"
+                className="w-full sm:w-auto"
+              >
+                {setHeroBackground.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Choose Photo
+                  </>
+                )}
+              </Button>
+              {setHeroBackground.isPending && (
+                <p
+                  className="text-sm text-muted-foreground"
+                  data-ocid="home_bg.loading_state"
+                >
+                  Uploading your background photo...
+                </p>
+              )}
             </CardContent>
           </Card>
 

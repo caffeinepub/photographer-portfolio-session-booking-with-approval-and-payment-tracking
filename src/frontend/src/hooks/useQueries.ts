@@ -437,3 +437,31 @@ export function useRemovePhotoFromAlbum() {
     },
   });
 }
+
+// ---- Hero Background ----
+
+export function useGetHeroBackground() {
+  const { actor, isFetching } = useActor();
+  return useQuery<string>({
+    queryKey: ["heroBackground"],
+    queryFn: async () => {
+      if (!actor) return "";
+      return (actor as any).getHeroBackground();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useSetHeroBackground() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (url: string) => {
+      if (!actor) throw new Error("Actor not available");
+      return (actor as any).setHeroBackground(url);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["heroBackground"] });
+    },
+  });
+}

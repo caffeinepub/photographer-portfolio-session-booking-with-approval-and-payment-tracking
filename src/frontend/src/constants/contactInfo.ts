@@ -1,6 +1,8 @@
 export const CONTACT_INFO = {
   phone: "225-910-2426",
   email: "slr.pics12@gmail.com",
+  profilePicture:
+    "/assets/uploads/img_4650-019d2283-52c4-7534-95bf-09c2d0a9a16c-1.jpeg",
   instagram: {
     handle: "@_slr.pics_",
     url: "https://www.instagram.com/_slr.pics_",

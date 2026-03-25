@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -20,9 +19,9 @@ export default function SiteHeader() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <img
-              src="/assets/generated/photographer-logo-slr-pics.dim_512x512.png"
-              alt="slr.pics Logo"
-              className="h-10 w-10 object-contain"
+              src="/assets/uploads/img_4650-019d2283-52c4-7534-95bf-09c2d0a9a16c-1.jpeg"
+              alt="slr.pics"
+              className="h-10 w-10 rounded-full object-cover"
             />
             <span className="font-serif text-xl font-semibold tracking-tight">
               slr.pics

@@ -471,24 +471,43 @@ export default function LandingPage() {
             behind-the-scenes moments.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            {/* Instagram — real gradient bubble */}
             <a
               href="https://www.instagram.com/_slr.pics_"
               target="_blank"
               rel="noopener noreferrer"
               data-ocid="social.primary_button"
-              className="inline-flex items-center gap-2.5 px-7 py-3 rounded-sm font-semibold text-sm tracking-wide border transition-colors text-[#E1306C] border-[#E1306C]/40 hover:bg-[#E1306C]/10"
+              className="inline-flex items-center gap-2.5 px-8 py-3 rounded-full font-semibold text-sm tracking-wide text-white transition-transform duration-200 hover:scale-105 active:scale-95"
+              style={{
+                background:
+                  "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
+                boxShadow: "0 4px 20px rgba(220, 39, 67, 0.45)",
+              }}
             >
               <SiInstagram className="h-4 w-4" />
               Instagram
             </a>
+
+            {/* TikTok — brand black with duotone icon glow */}
             <a
               href="https://www.tiktok.com/@_slr.pics_?_r=1&_t=ZP-93qjJcBT9Re"
               target="_blank"
               rel="noopener noreferrer"
               data-ocid="social.secondary_button"
-              className="inline-flex items-center gap-2.5 px-7 py-3 rounded-sm font-semibold text-sm tracking-wide border transition-colors text-[#69C9D0] border-[#69C9D0]/40 hover:bg-[#69C9D0]/10"
+              className="inline-flex items-center gap-2.5 px-8 py-3 rounded-full font-semibold text-sm tracking-wide text-white transition-transform duration-200 hover:scale-105 active:scale-95"
+              style={{
+                background: "#010101",
+                boxShadow: "0 4px 20px rgba(105, 201, 208, 0.35)",
+                border: "1px solid rgba(105,201,208,0.25)",
+              }}
             >
-              <SiTiktok className="h-4 w-4" />
+              <SiTiktok
+                className="h-4 w-4"
+                style={{
+                  filter:
+                    "drop-shadow(2px 2px 0px #EE1D52) drop-shadow(-2px -2px 0px #69C9D0)",
+                }}
+              />
               TikTok
             </a>
           </div>

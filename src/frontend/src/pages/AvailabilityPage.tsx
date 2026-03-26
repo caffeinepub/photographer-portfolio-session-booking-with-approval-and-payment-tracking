@@ -52,7 +52,10 @@ export default function AvailabilityPage() {
           </div>
 
           {/* Calendar */}
-          <div className="w-full" data-ocid="availability.panel">
+          <div
+            className="w-full rounded-xl border shadow-sm bg-card p-4 md:p-6"
+            data-ocid="availability.panel"
+          >
             {isLoading ? (
               <div
                 className="flex items-center justify-center h-64 text-muted-foreground"
@@ -70,34 +73,26 @@ export default function AvailabilityPage() {
                   unavailable:
                     "!bg-red-100 !text-red-500 line-through opacity-60 cursor-not-allowed",
                 }}
-                className="rounded-xl border shadow-sm p-4 md:p-6 bg-card w-full"
                 disabled={(date) =>
                   date < new Date(new Date().setHours(0, 0, 0, 0))
                 }
+                className="w-full [--cell-size:--spacing(12)] md:[--cell-size:--spacing(14)]"
                 classNames={{
-                  months:
-                    "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
-                  month: "space-y-4 w-full",
-                  caption:
-                    "flex justify-center pt-1 relative items-center mb-4",
+                  root: "w-full",
+                  months: "w-full",
+                  month: "w-full",
+                  month_caption:
+                    "flex items-center justify-center h-14 w-full px-14 mb-2",
                   caption_label: "text-xl font-semibold",
-                  nav: "space-x-1 flex items-center",
-                  nav_button:
-                    "h-10 w-10 bg-transparent p-0 opacity-50 hover:opacity-100",
-                  nav_button_previous: "absolute left-1",
-                  nav_button_next: "absolute right-1",
-                  table: "w-full border-collapse",
-                  head_row: "flex w-full",
-                  head_cell:
-                    "text-muted-foreground rounded-md flex-1 font-medium text-sm text-center py-2",
-                  row: "flex w-full mt-1",
-                  cell: "flex-1 text-center text-sm p-0.5 relative",
-                  day: "w-full h-12 md:h-14 p-0 font-normal text-base aria-selected:opacity-100 rounded-lg hover:bg-accent transition-colors",
-                  day_selected:
-                    "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-                  day_today: "bg-accent text-accent-foreground font-bold",
-                  day_outside: "text-muted-foreground opacity-50",
-                  day_disabled: "text-muted-foreground opacity-50",
+                  weekdays: "w-full",
+                  weekday:
+                    "text-muted-foreground flex-1 font-medium text-sm text-center py-2 select-none",
+                  week: "w-full flex mt-1",
+                  day: "flex-1 text-center p-0.5 relative aspect-square",
+                  today:
+                    "bg-accent text-accent-foreground rounded-md font-bold",
+                  outside: "text-muted-foreground opacity-40",
+                  disabled: "text-muted-foreground opacity-30",
                 }}
               />
             )}

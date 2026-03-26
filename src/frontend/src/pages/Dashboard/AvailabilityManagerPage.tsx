@@ -1,9 +1,25 @@
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Link } from "@tanstack/react-router";
-import { format, parseISO } from "date-fns";
-import { ArrowLeft, CalendarX, Save, Trash2 } from "lucide-react";
-// biome-ignore lint/correctness/useExhaustiveDependencies: savedDates array identity changes on each fetch; join is a stable primitive dep
+import {
+  addMonths,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isSameDay,
+  isSameMonth,
+  parseISO,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
+import {
+  ArrowLeft,
+  CalendarX,
+  ChevronLeft,
+  ChevronRight,
+  Save,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -11,14 +27,17 @@ import {
   useSetUnavailableDates,
 } from "../../hooks/useQueries";
 
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 export default function AvailabilityManagerPage() {
   const { data: savedDates = [], isLoading } = useGetUnavailableDates();
   const setUnavailableDates = useSetUnavailableDates();
 
   const [localDates, setLocalDates] = useState<Date[]>([]);
   const [isDirty, setIsDirty] = useState(false);
+  const [month, setMonth] = useState<Date>(new Date());
 
-  // Sync from server on load
+  // biome-ignore lint/correctness/useExhaustiveDependencies: savedDates array identity changes on each fetch; join is a stable primitive dep
   useEffect(() => {
     if (!isLoading) {
       const parsed = savedDates
@@ -33,8 +52,15 @@ export default function AvailabilityManagerPage() {
       setLocalDates(parsed);
       setIsDirty(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, savedDates]);
+  }, [isLoading, savedDates.join("|")]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleDate = (day: Date) => {
+    setLocalDates((prev) => {
+      const exists = prev.some((d) => isSameDay(d, day));
+      return exists ? prev.filter((d) => !isSameDay(d, day)) : [...prev, day];
+    });
+    setIsDirty(true);
+  };
 
   const handleSave = async () => {
     const dateStrings = localDates.map((d) => format(d, "yyyy-MM-dd"));
@@ -52,6 +78,16 @@ export default function AvailabilityManagerPage() {
     setIsDirty(true);
   };
 
+  const monthStart = startOfMonth(month);
+  const monthEnd = endOfMonth(month);
+  const calStart = startOfWeek(monthStart);
+  const calEnd = endOfWeek(monthEnd);
+  const days = eachDayOfInterval({ start: calStart, end: calEnd });
+
+  const isBlocked = (d: Date) => localDates.some((u) => isSameDay(u, d));
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const sortedDateStrings = localDates
     .map((d) => format(d, "yyyy-MM-dd"))
     .sort();
@@ -59,7 +95,6 @@ export default function AvailabilityManagerPage() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
         <div className="flex items-center gap-4">
           <Button
             asChild
@@ -79,12 +114,14 @@ export default function AvailabilityManagerPage() {
             Manage Availability
           </h1>
           <p className="text-muted-foreground">
-            Click any date to mark it as unavailable. Click again to clear it.
+            Click any date to block or unblock it. Save when done.
           </p>
         </div>
 
-        {/* Calendar */}
-        <div className="w-full" data-ocid="availability_manager.panel">
+        <div
+          className="w-full rounded-xl border shadow-sm bg-card p-4 md:p-8"
+          data-ocid="availability_manager.panel"
+        >
           {isLoading ? (
             <div
               className="flex items-center justify-center h-64 text-muted-foreground"
@@ -93,47 +130,77 @@ export default function AvailabilityManagerPage() {
               Loading...
             </div>
           ) : (
-            <Calendar
-              mode="multiple"
-              selected={localDates}
-              onSelect={(days) => {
-                setLocalDates(days ?? []);
-                setIsDirty(true);
-              }}
-              className="rounded-xl border shadow-sm p-4 md:p-6 bg-card w-full"
-              modifiersClassNames={{
-                selected:
-                  "!bg-red-100 !text-red-600 hover:!bg-red-200 font-semibold",
-              }}
-              classNames={{
-                months:
-                  "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
-                month: "space-y-4 w-full",
-                caption: "flex justify-center pt-1 relative items-center mb-4",
-                caption_label: "text-xl font-semibold",
-                nav: "space-x-1 flex items-center",
-                nav_button:
-                  "h-10 w-10 bg-transparent p-0 opacity-50 hover:opacity-100",
-                nav_button_previous: "absolute left-1",
-                nav_button_next: "absolute right-1",
-                table: "w-full border-collapse",
-                head_row: "flex w-full",
-                head_cell:
-                  "text-muted-foreground rounded-md flex-1 font-medium text-sm text-center py-2",
-                row: "flex w-full mt-1",
-                cell: "flex-1 text-center text-sm p-0.5 relative",
-                day: "w-full h-12 md:h-14 p-0 font-normal text-base aria-selected:opacity-100 rounded-lg hover:bg-accent transition-colors",
-                day_selected:
-                  "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-                day_today: "bg-accent text-accent-foreground font-bold",
-                day_outside: "text-muted-foreground opacity-50",
-                day_disabled: "text-muted-foreground opacity-50",
-              }}
-            />
+            <>
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  type="button"
+                  onClick={() => setMonth((m) => addMonths(m, -1))}
+                  className="p-2 rounded-lg hover:bg-accent transition-colors"
+                  aria-label="Previous month"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <span className="text-xl font-semibold">
+                  {format(month, "MMMM yyyy")}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setMonth((m) => addMonths(m, 1))}
+                  className="p-2 rounded-lg hover:bg-accent transition-colors"
+                  aria-label="Next month"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-7 mb-2">
+                {DAYS.map((d) => (
+                  <div
+                    key={d}
+                    className="text-center text-xs font-semibold text-muted-foreground py-2 uppercase tracking-wide"
+                  >
+                    {d}
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-7 gap-1">
+                {days.map((day) => {
+                  const outside = !isSameMonth(day, month);
+                  const blocked = isBlocked(day);
+                  const isToday = isSameDay(day, today);
+
+                  let cellClass =
+                    "flex items-center justify-center rounded-lg text-sm font-medium transition-colors cursor-pointer select-none aspect-square ";
+                  if (outside) {
+                    cellClass += "text-muted-foreground/30 cursor-default";
+                  } else if (blocked) {
+                    cellClass +=
+                      "bg-red-100 text-red-600 hover:bg-red-200 font-semibold";
+                  } else if (isToday) {
+                    cellClass +=
+                      "bg-accent text-accent-foreground font-bold hover:bg-accent/80 ring-2 ring-primary";
+                  } else {
+                    cellClass += "hover:bg-accent/60";
+                  }
+
+                  return (
+                    <button
+                      key={day.toISOString()}
+                      type="button"
+                      className={cellClass}
+                      onClick={() => !outside && toggleDate(day)}
+                      aria-label={`${blocked ? "Unblock" : "Block"} ${format(day, "MMM d")}`}
+                    >
+                      {format(day, "d")}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-3 flex-wrap">
           <Button
             onClick={handleSave}
@@ -149,7 +216,6 @@ export default function AvailabilityManagerPage() {
               </>
             )}
           </Button>
-
           {localDates.length > 0 && (
             <Button
               variant="outline"
@@ -160,7 +226,6 @@ export default function AvailabilityManagerPage() {
               Remove All Blocks
             </Button>
           )}
-
           {isDirty && (
             <span className="text-sm text-muted-foreground">
               Unsaved changes
@@ -168,7 +233,6 @@ export default function AvailabilityManagerPage() {
           )}
         </div>
 
-        {/* Blocked dates list */}
         {sortedDateStrings.length > 0 ? (
           <div className="border rounded-xl p-5 space-y-3 bg-card">
             <h2 className="font-semibold text-sm uppercase tracking-wider opacity-60 flex items-center gap-2">

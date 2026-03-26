@@ -1,11 +1,24 @@
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Link } from "@tanstack/react-router";
-import { format, parseISO } from "date-fns";
-import { CalendarCheck, CalendarX } from "lucide-react";
+import {
+  addMonths,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  isBefore,
+  isSameDay,
+  isSameMonth,
+  parseISO,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import PageCTABar from "../components/PageCTABar";
 import { useGetUnavailableDates } from "../hooks/useQueries";
+
+const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function AvailabilityPage() {
   const { data: unavailableDateStrings = [], isLoading } =
@@ -22,11 +35,23 @@ export default function AvailabilityPage() {
     })
     .filter((d): d is Date => d !== null);
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const monthStart = startOfMonth(month);
+  const monthEnd = endOfMonth(month);
+  const calStart = startOfWeek(monthStart);
+  const calEnd = endOfWeek(monthEnd);
+  const days = eachDayOfInterval({ start: calStart, end: calEnd });
+
+  const isUnavailable = (d: Date) =>
+    unavailableDays.some((u) => isSameDay(u, d));
+  const isPast = (d: Date) => isBefore(d, today);
+
   return (
     <main>
       <section className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto space-y-8">
-          {/* Header */}
           <div className="text-center space-y-3">
             <p className="text-sm font-medium tracking-widest uppercase opacity-60">
               slr.pics
@@ -39,21 +64,19 @@ export default function AvailabilityPage() {
             </p>
           </div>
 
-          {/* Legend */}
           <div className="flex items-center justify-center gap-6 text-sm">
             <div className="flex items-center gap-2">
-              <CalendarCheck className="h-4 w-4 text-green-600" />
+              <span className="inline-block w-3 h-3 rounded-full bg-green-500" />
               <span className="text-foreground/70">Available</span>
             </div>
             <div className="flex items-center gap-2">
-              <CalendarX className="h-4 w-4 text-red-500" />
+              <span className="inline-block w-3 h-3 rounded-full bg-red-400" />
               <span className="text-foreground/70">Unavailable</span>
             </div>
           </div>
 
-          {/* Calendar */}
           <div
-            className="w-full rounded-xl border shadow-sm bg-card p-4 md:p-6"
+            className="w-full rounded-xl border shadow-sm bg-card p-4 md:p-8"
             data-ocid="availability.panel"
           >
             {isLoading ? (
@@ -64,63 +87,75 @@ export default function AvailabilityPage() {
                 Loading availability...
               </div>
             ) : (
-              <Calendar
-                mode="single"
-                month={month}
-                onMonthChange={setMonth}
-                modifiers={{ unavailable: unavailableDays }}
-                modifiersClassNames={{
-                  unavailable:
-                    "!bg-red-100 !text-red-500 line-through opacity-60 cursor-not-allowed",
-                }}
-                disabled={(date) =>
-                  date < new Date(new Date().setHours(0, 0, 0, 0))
-                }
-                className="w-full [--cell-size:--spacing(12)] md:[--cell-size:--spacing(14)]"
-                classNames={{
-                  root: "w-full",
-                  months: "w-full",
-                  month: "w-full",
-                  month_caption:
-                    "flex items-center justify-center h-14 w-full px-14 mb-2",
-                  caption_label: "text-xl font-semibold",
-                  weekdays: "w-full",
-                  weekday:
-                    "text-muted-foreground flex-1 font-medium text-sm text-center py-2 select-none",
-                  week: "w-full flex mt-1",
-                  day: "flex-1 text-center p-0.5 relative aspect-square",
-                  today:
-                    "bg-accent text-accent-foreground rounded-md font-bold",
-                  outside: "text-muted-foreground opacity-40",
-                  disabled: "text-muted-foreground opacity-30",
-                }}
-              />
+              <>
+                {/* Month nav */}
+                <div className="flex items-center justify-between mb-6">
+                  <button
+                    type="button"
+                    onClick={() => setMonth((m) => addMonths(m, -1))}
+                    className="p-2 rounded-lg hover:bg-accent transition-colors"
+                    aria-label="Previous month"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <span className="text-xl font-semibold">
+                    {format(month, "MMMM yyyy")}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setMonth((m) => addMonths(m, 1))}
+                    className="p-2 rounded-lg hover:bg-accent transition-colors"
+                    aria-label="Next month"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* Day headers */}
+                <div className="grid grid-cols-7 mb-2">
+                  {DAYS.map((d) => (
+                    <div
+                      key={d}
+                      className="text-center text-xs font-semibold text-muted-foreground py-2 uppercase tracking-wide"
+                    >
+                      {d}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Day cells */}
+                <div className="grid grid-cols-7 gap-1">
+                  {days.map((day) => {
+                    const outside = !isSameMonth(day, month);
+                    const past = isPast(day);
+                    const unavail = isUnavailable(day);
+                    const isToday = isSameDay(day, today);
+
+                    let cellClass =
+                      "flex items-center justify-center rounded-lg text-sm font-medium transition-colors aspect-square ";
+                    if (outside || past) {
+                      cellClass += "text-muted-foreground/30";
+                    } else if (unavail) {
+                      cellClass += "bg-red-100 text-red-500 line-through";
+                    } else if (isToday) {
+                      cellClass +=
+                        "bg-accent text-accent-foreground font-bold ring-2 ring-primary";
+                    } else {
+                      cellClass +=
+                        "bg-green-50 text-green-700 hover:bg-green-100";
+                    }
+
+                    return (
+                      <div key={day.toISOString()} className={cellClass}>
+                        {format(day, "d")}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
             )}
           </div>
 
-          {/* Unavailable date list */}
-          {unavailableDays.length > 0 && (
-            <div className="border rounded-xl p-5 space-y-3 bg-card">
-              <h2 className="font-semibold text-sm uppercase tracking-wider opacity-60">
-                Blocked Dates
-              </h2>
-              <ul className="flex flex-wrap gap-2">
-                {unavailableDateStrings
-                  .slice()
-                  .sort()
-                  .map((d) => (
-                    <li
-                      key={d}
-                      className="px-3 py-1 rounded-full bg-red-100 text-red-600 text-sm font-medium"
-                    >
-                      {format(parseISO(d), "MMM d, yyyy")}
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          )}
-
-          {/* CTA */}
           <div className="text-center pt-4">
             <p className="text-muted-foreground mb-4">
               Sports sessions starting at <strong>$20</strong>. Ready to lock in
@@ -137,7 +172,6 @@ export default function AvailabilityPage() {
           </div>
         </div>
       </section>
-
       <PageCTABar />
     </main>
   );

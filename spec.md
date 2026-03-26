@@ -1,32 +1,52 @@
 # slr.pics
 
 ## Current State
-The booking page (`BookingPage.tsx`) is a single long scrollable form with all fields on one page — contact info, coverage details, notes, and contact method all stacked together. It works but can feel overwhelming. The confirmation page is a clean card.
+The home page (LandingPage.tsx) has:
+- Hero section with background image, headline, and two CTA buttons
+- Specialties section (text rows for Baseball, Basketball, Football)
+- Featured Work grid (shows 3 portfolio items)
+- Testimonials grid (when data exists)
+- Submit a Review form section
+- CTA section (dark primary background with booking prompt)
+- Social Follow section (Instagram + TikTok buttons)
+
+Issues:
+- Hero headline is generic/AI-sounding
+- No immediate visual identity or name
+- Specialties section is sparse and minimal
+- Featured Work grid doesn't show well when empty
+- Submit a Review form is buried at the bottom and blends in
+- CTA section is repetitive with hero CTAs
+- No visual hook or personality — feels bland
 
 ## Requested Changes (Diff)
 
 ### Add
-- Multi-step form UI with a progress indicator (Step 1: Your Info, Step 2: Event Details, Step 3: Review & Submit)
-- Step-by-step navigation (Next/Back buttons between steps)
-- Review step that shows a summary of all entered info before final submission
-- Visual step progress bar/indicator at the top of the form
+- Photographer name "Slade Robert" and brand "slr.pics" prominently in the hero
+- A brief tagline that communicates what makes this photographer different (local Louisiana sports photographer)
+- A visual stats/badge bar (e.g., sports covered, years active, etc.) right below hero
+- Better visual separation between sections
+- "Book a Session" secondary CTA added near the specialties section
 
 ### Modify
-- Split existing form fields into 3 logical steps:
-  - Step 1: Full Name, Email, Phone, Preferred Contact Method (+ Instagram handle if DM selected)
-  - Step 2: Sport, Event Date, Time, Venue/Location, Event Description, Additional Notes
-  - Step 3: Read-only summary of all info with Submit button
-- Improve field labels and helper text for clarity
-- Confirmation page: add clearer summary of what was submitted (sport type, date, contact method)
+- Hero headline to be more personal and bold — include the photographer's name
+- Specialties rows to include a small icon or visual cue per sport, and a "Book [sport]" link
+- Featured Work section to always show (fallback text if empty)
+- Testimonials section to feel more editorial/magazine-style
+- Review form section to stand out more clearly with better contrast
+- CTA section to feel more premium (better copy, cleaner layout)
+- Social follow section to match the overall dark aesthetic better
 
 ### Remove
-- Nothing removed; just reorganized into steps
+- Redundant or generic marketing language
+- Excessive whitespace in empty states
 
 ## Implementation Plan
-1. Refactor `BookingPage.tsx` to a stepped form with local state tracking current step (0, 1, 2)
-2. Add a step progress indicator at top (Step 1 of 3 style with visual dots or numbered steps)
-3. Step 1: contact fields + contact method
-4. Step 2: sport/event fields
-5. Step 3: review summary (read-only) + submit button
-6. Validation per step before allowing Next
-7. Keep all existing submit logic and navigation to `/book/confirmation` intact
+1. Update LandingPage.tsx hero: add photographer name + tagline + more personal copy
+2. Add a subtle stats bar (sports covered, sessions booked, etc.) below hero
+3. Improve specialties section rows with sport-specific icons (lucide icons)
+4. Add Book button to specialties section
+5. Improve featured work section with better fallback when no photos
+6. Make testimonials section feel more editorial
+7. Polish review form and CTA sections
+8. Keep all existing data hooks and backend connections intact

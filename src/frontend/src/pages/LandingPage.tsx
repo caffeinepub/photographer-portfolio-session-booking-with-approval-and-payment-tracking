@@ -10,7 +10,9 @@ import {
   Circle,
   Crosshair,
   Shield,
+  Target,
   Timer,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
@@ -84,7 +86,8 @@ export default function LandingPage() {
           </h1>
           <p className="text-base md:text-lg mb-10 max-w-lg mx-auto text-white/70 font-light">
             Capturing athletes in motion — baseball, basketball, football,
-            soccer, track & field, and more across Louisiana.
+            soccer, volleyball, softball, track & field, and more across
+            Louisiana.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button
@@ -116,7 +119,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-3 divide-x divide-background/10">
             {[
-              { stat: "6+", label: "Sports Covered" },
+              { stat: "8+", label: "Sports Covered" },
               { stat: "LA", label: "Louisiana-Based" },
               { stat: "$20", label: "Starting Price" },
             ].map((item) => (
@@ -168,6 +171,18 @@ export default function LandingPage() {
                   desc: "Game coverage, action shots, match highlights",
                   icon: Activity,
                   sport: "soccer",
+                },
+                {
+                  label: "Volleyball",
+                  desc: "Match coverage, spike and dig moments",
+                  icon: Zap,
+                  sport: "volleyball",
+                },
+                {
+                  label: "Softball",
+                  desc: "Game coverage, pitching and batting action",
+                  icon: Target,
+                  sport: "softball",
                 },
                 {
                   label: "Track & Field",

@@ -14,6 +14,8 @@ export const SPORT_TYPES = [
   { value: "football", label: "Football" },
   { value: "soccer", label: "Soccer" },
   { value: "track", label: "Track & Field" },
+  { value: "volleyball", label: "Volleyball" },
+  { value: "softball", label: "Softball" },
   { value: "other", label: "Other" },
 ] as const;
 

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import profilePic from "/assets/uploads/img_4650-019d2283-52c4-7534-95bf-09c2d0a9a16c-1.jpeg";
 import { useInternetIdentity } from "../../hooks/useInternetIdentity";
 import { useIsCallerAdmin } from "../../hooks/useQueries";
 import LoginButton from "../auth/LoginButton";
@@ -19,7 +20,7 @@ export default function SiteHeader() {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <img
-              src="/assets/uploads/img_4650-019d2283-52c4-7534-95bf-09c2d0a9a16c-1.jpeg"
+              src={profilePic}
               alt="slr.pics"
               className="h-10 w-10 rounded-full object-cover"
             />

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
+import profilePic from "/assets/uploads/img_4650-019d2283-52c4-7534-95bf-09c2d0a9a16c-1.jpeg";
 
 export default function SiteFooter() {
   const currentYear = new Date().getFullYear();
@@ -16,7 +17,7 @@ export default function SiteFooter() {
           <div className="flex flex-col md:flex-row md:justify-between md:items-start space-y-4 md:space-y-0">
             <div className="flex items-center space-x-3">
               <img
-                src="/assets/uploads/img_4650-019d2283-52c4-7534-95bf-09c2d0a9a16c-1.jpeg"
+                src={profilePic}
                 alt="slr.pics"
                 className="h-8 w-8 object-cover rounded-full opacity-80"
               />

@@ -58,7 +58,7 @@ export default function AvailabilityManagerPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="max-w-2xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Button
@@ -84,10 +84,7 @@ export default function AvailabilityManagerPage() {
         </div>
 
         {/* Calendar */}
-        <div
-          className="flex justify-center"
-          data-ocid="availability_manager.panel"
-        >
+        <div className="w-full" data-ocid="availability_manager.panel">
           {isLoading ? (
             <div
               className="flex items-center justify-center h-64 text-muted-foreground"
@@ -103,10 +100,34 @@ export default function AvailabilityManagerPage() {
                 setLocalDates(days ?? []);
                 setIsDirty(true);
               }}
-              className="rounded-xl border shadow-sm p-4 bg-card"
+              className="rounded-xl border shadow-sm p-4 md:p-6 bg-card w-full"
               modifiersClassNames={{
                 selected:
                   "!bg-red-100 !text-red-600 hover:!bg-red-200 font-semibold",
+              }}
+              classNames={{
+                months:
+                  "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
+                month: "space-y-4 w-full",
+                caption: "flex justify-center pt-1 relative items-center mb-4",
+                caption_label: "text-xl font-semibold",
+                nav: "space-x-1 flex items-center",
+                nav_button:
+                  "h-10 w-10 bg-transparent p-0 opacity-50 hover:opacity-100",
+                nav_button_previous: "absolute left-1",
+                nav_button_next: "absolute right-1",
+                table: "w-full border-collapse",
+                head_row: "flex w-full",
+                head_cell:
+                  "text-muted-foreground rounded-md flex-1 font-medium text-sm text-center py-2",
+                row: "flex w-full mt-1",
+                cell: "flex-1 text-center text-sm p-0.5 relative",
+                day: "w-full h-12 md:h-14 p-0 font-normal text-base aria-selected:opacity-100 rounded-lg hover:bg-accent transition-colors",
+                day_selected:
+                  "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                day_today: "bg-accent text-accent-foreground font-bold",
+                day_outside: "text-muted-foreground opacity-50",
+                day_disabled: "text-muted-foreground opacity-50",
               }}
             />
           )}

@@ -25,7 +25,7 @@ export default function AvailabilityPage() {
   return (
     <main>
       <section className="container mx-auto px-4 py-16">
-        <div className="max-w-3xl mx-auto space-y-8">
+        <div className="max-w-4xl mx-auto space-y-8">
           {/* Header */}
           <div className="text-center space-y-3">
             <p className="text-sm font-medium tracking-widest uppercase opacity-60">
@@ -70,7 +70,7 @@ export default function AvailabilityPage() {
                   unavailable:
                     "!bg-red-100 !text-red-500 line-through opacity-60 cursor-not-allowed",
                 }}
-                className="rounded-xl border shadow-sm p-3 sm:p-4 bg-card w-full"
+                className="rounded-xl border shadow-sm p-4 md:p-6 bg-card w-full"
                 disabled={(date) =>
                   date < new Date(new Date().setHours(0, 0, 0, 0))
                 }
@@ -78,23 +78,24 @@ export default function AvailabilityPage() {
                   months:
                     "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
                   month: "space-y-4 w-full",
-                  caption: "flex justify-center pt-1 relative items-center",
-                  caption_label: "text-lg font-medium",
+                  caption:
+                    "flex justify-center pt-1 relative items-center mb-4",
+                  caption_label: "text-xl font-semibold",
                   nav: "space-x-1 flex items-center",
                   nav_button:
-                    "h-9 w-9 bg-transparent p-0 opacity-50 hover:opacity-100",
+                    "h-10 w-10 bg-transparent p-0 opacity-50 hover:opacity-100",
                   nav_button_previous: "absolute left-1",
                   nav_button_next: "absolute right-1",
-                  table: "w-full border-collapse space-y-1",
+                  table: "w-full border-collapse",
                   head_row: "flex w-full",
                   head_cell:
-                    "text-muted-foreground rounded-md flex-1 font-normal text-xs text-center",
+                    "text-muted-foreground rounded-md flex-1 font-medium text-sm text-center py-2",
                   row: "flex w-full mt-1",
-                  cell: "flex-1 text-center text-sm p-0 relative",
-                  day: "w-full h-9 p-0 font-normal aria-selected:opacity-100",
+                  cell: "flex-1 text-center text-sm p-0.5 relative",
+                  day: "w-full h-12 md:h-14 p-0 font-normal text-base aria-selected:opacity-100 rounded-lg hover:bg-accent transition-colors",
                   day_selected:
                     "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-                  day_today: "bg-accent text-accent-foreground",
+                  day_today: "bg-accent text-accent-foreground font-bold",
                   day_outside: "text-muted-foreground opacity-50",
                   day_disabled: "text-muted-foreground opacity-50",
                 }}

@@ -18,7 +18,7 @@ export default function SiteHeader() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center space-x-2 shrink-0">
             <img
               src={profilePic}
               alt="slr.pics"
@@ -30,45 +30,45 @@ export default function SiteHeader() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-4 lg:space-x-6 mx-4">
             <Link
               to="/"
-              className="text-sm font-medium transition-opacity hover:opacity-60"
+              className="text-xs lg:text-sm font-medium whitespace-nowrap transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Home
             </Link>
             <Link
               to="/portfolio"
-              className="text-sm font-medium transition-opacity hover:opacity-60"
+              className="text-xs lg:text-sm font-medium whitespace-nowrap transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Portfolio
             </Link>
             <Link
               to="/availability"
-              className="text-sm font-medium transition-opacity hover:opacity-60"
+              className="text-xs lg:text-sm font-medium whitespace-nowrap transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Check Availability
             </Link>
             <Link
               to="/photos"
-              className="text-sm font-medium transition-opacity hover:opacity-60"
+              className="text-xs lg:text-sm font-medium whitespace-nowrap transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Client Albums
             </Link>
             <Link
               to="/book"
-              className="text-sm font-medium transition-opacity hover:opacity-60"
+              className="text-xs lg:text-sm font-medium whitespace-nowrap transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               Book Coverage
             </Link>
             <Link
               to="/about"
-              className="text-sm font-medium transition-opacity hover:opacity-60"
+              className="text-xs lg:text-sm font-medium whitespace-nowrap transition-opacity hover:opacity-60"
               data-ocid="nav.link"
             >
               About
@@ -76,7 +76,7 @@ export default function SiteHeader() {
             {isAuthenticated && isAdmin && (
               <Link
                 to="/dashboard"
-                className="text-sm font-medium transition-opacity hover:opacity-60"
+                className="text-xs lg:text-sm font-medium whitespace-nowrap transition-opacity hover:opacity-60"
                 data-ocid="nav.link"
               >
                 Dashboard
@@ -85,10 +85,10 @@ export default function SiteHeader() {
           </nav>
 
           {/* Desktop Right: Contact box + Login */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center space-x-2 shrink-0">
             <Link
               to="/contact"
-              className="border border-foreground px-5 py-2 text-sm font-medium tracking-wide transition-opacity hover:opacity-60 rounded-none"
+              className="border border-foreground px-3 lg:px-5 py-2 text-xs lg:text-sm font-medium whitespace-nowrap tracking-wide transition-opacity hover:opacity-60 rounded-none"
               data-ocid="nav.contact_button"
             >
               Contact

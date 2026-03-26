@@ -379,7 +379,7 @@ export default function LandingPage() {
                     setReviewForm((p) => ({ ...p, name: e.target.value }))
                   }
                   placeholder="e.g. Marcus Johnson"
-                  className="bg-background/10 border-background/20 text-background placeholder:text-background/30 focus:border-background/40"
+                  className="bg-transparent border-background/30 text-background placeholder:text-background/25 focus:border-background/50"
                 />
               </div>
               <div className="space-y-1.5">
@@ -397,7 +397,7 @@ export default function LandingPage() {
                     setReviewForm((p) => ({ ...p, sport: e.target.value }))
                   }
                   placeholder="e.g. Baseball"
-                  className="bg-background/10 border-background/20 text-background placeholder:text-background/30 focus:border-background/40"
+                  className="bg-transparent border-background/30 text-background placeholder:text-background/25 focus:border-background/50"
                 />
               </div>
               <div className="space-y-1.5">
@@ -416,7 +416,7 @@ export default function LandingPage() {
                   }
                   placeholder="Tell us about your experience..."
                   rows={4}
-                  className="bg-background/10 border-background/20 text-background placeholder:text-background/30 focus:border-background/40 resize-none"
+                  className="bg-transparent border-background/30 text-background placeholder:text-background/25 focus:border-background/50 resize-none"
                 />
               </div>
               <Button
@@ -476,7 +476,7 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               data-ocid="social.primary_button"
-              className="inline-flex items-center gap-2.5 px-7 py-3 rounded-sm text-background font-semibold text-sm tracking-wide border border-background/20 hover:bg-background/10 transition-colors"
+              className="inline-flex items-center gap-2.5 px-7 py-3 rounded-sm font-semibold text-sm tracking-wide border transition-colors text-[#E1306C] border-[#E1306C]/40 hover:bg-[#E1306C]/10"
             >
               <SiInstagram className="h-4 w-4" />
               Instagram
@@ -486,7 +486,7 @@ export default function LandingPage() {
               target="_blank"
               rel="noopener noreferrer"
               data-ocid="social.secondary_button"
-              className="inline-flex items-center gap-2.5 px-7 py-3 rounded-sm text-background font-semibold text-sm tracking-wide border border-background/20 hover:bg-background/10 transition-colors"
+              className="inline-flex items-center gap-2.5 px-7 py-3 rounded-sm font-semibold text-sm tracking-wide border transition-colors text-[#69C9D0] border-[#69C9D0]/40 hover:bg-[#69C9D0]/10"
             >
               <SiTiktok className="h-4 w-4" />
               TikTok

@@ -690,7 +690,7 @@ export default function BookingPage() {
                       data-ocid="booking.submit_button"
                       disabled={createBooking.isPending}
                       size="lg"
-                      className="gap-2"
+                      className="gap-2 text-sm sm:text-base"
                     >
                       {createBooking.isPending ? (
                         <>
@@ -698,7 +698,12 @@ export default function BookingPage() {
                           Submitting...
                         </>
                       ) : (
-                        "Submit Coverage Request"
+                        <>
+                          <span className="sm:hidden">Submit Request</span>
+                          <span className="hidden sm:inline">
+                            Submit Coverage Request
+                          </span>
+                        </>
                       )}
                     </Button>
                   </div>

@@ -52,7 +52,7 @@ export default function AvailabilityPage() {
           </div>
 
           {/* Calendar */}
-          <div className="flex justify-center" data-ocid="availability.panel">
+          <div className="w-full" data-ocid="availability.panel">
             {isLoading ? (
               <div
                 className="flex items-center justify-center h-64 text-muted-foreground"
@@ -70,14 +70,14 @@ export default function AvailabilityPage() {
                   unavailable:
                     "!bg-red-100 !text-red-500 line-through opacity-60 cursor-not-allowed",
                 }}
-                className="rounded-xl border shadow-sm p-4 bg-card"
+                className="rounded-xl border shadow-sm p-3 sm:p-4 bg-card w-full"
                 disabled={(date) =>
                   date < new Date(new Date().setHours(0, 0, 0, 0))
                 }
                 classNames={{
                   months:
-                    "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-                  month: "space-y-4",
+                    "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
+                  month: "space-y-4 w-full",
                   caption: "flex justify-center pt-1 relative items-center",
                   caption_label: "text-lg font-medium",
                   nav: "space-x-1 flex items-center",
@@ -86,12 +86,12 @@ export default function AvailabilityPage() {
                   nav_button_previous: "absolute left-1",
                   nav_button_next: "absolute right-1",
                   table: "w-full border-collapse space-y-1",
-                  head_row: "flex",
+                  head_row: "flex w-full",
                   head_cell:
-                    "text-muted-foreground rounded-md w-12 font-normal text-sm",
-                  row: "flex w-full mt-2",
-                  cell: "h-12 w-12 text-center text-sm p-0 relative",
-                  day: "h-12 w-12 p-0 font-normal aria-selected:opacity-100",
+                    "text-muted-foreground rounded-md flex-1 font-normal text-xs text-center",
+                  row: "flex w-full mt-1",
+                  cell: "flex-1 text-center text-sm p-0 relative",
+                  day: "w-full h-9 p-0 font-normal aria-selected:opacity-100",
                   day_selected:
                     "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
                   day_today: "bg-accent text-accent-foreground",

@@ -177,35 +177,37 @@ export default function PortfolioGalleryPage() {
             </p>
           </div>
 
-          {/* Tab Pills */}
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
-            <button
-              type="button"
-              data-ocid="portfolio.tab"
-              onClick={() => setActiveTab("all")}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all border ${
-                activeTab === "all"
-                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                  : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
-              }`}
-            >
-              All
-            </button>
-            {TABS.map((tab) => (
+          {/* Tab Pills - horizontally scrollable on mobile */}
+          <div className="relative mb-8">
+            <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide -mx-1 px-1">
               <button
-                key={tab.id}
                 type="button"
                 data-ocid="portfolio.tab"
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all border ${
-                  activeTab === tab.id
+                onClick={() => setActiveTab("all")}
+                className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                  activeTab === "all"
                     ? "bg-primary text-primary-foreground border-primary shadow-sm"
                     : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 }`}
               >
-                {tab.label}
+                All
               </button>
-            ))}
+              {TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  data-ocid="portfolio.tab"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all border ${
+                    activeTab === tab.id
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-background border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Book Session Button for sports tabs */}
@@ -302,9 +304,9 @@ export default function PortfolioGalleryPage() {
                   e.stopPropagation();
                   prev();
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white bg-black/40 rounded-full p-3 transition-colors"
+                className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white bg-black/40 rounded-full p-2 sm:p-3 transition-colors"
               >
-                <ChevronLeft className="h-7 w-7" />
+                <ChevronLeft className="h-6 w-6 sm:h-7 sm:w-7" />
               </button>
             )}
 
@@ -317,9 +319,9 @@ export default function PortfolioGalleryPage() {
                   e.stopPropagation();
                   next();
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white bg-black/40 rounded-full p-3 transition-colors"
+                className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 text-white/80 hover:text-white bg-black/40 rounded-full p-2 sm:p-3 transition-colors"
               >
-                <ChevronRight className="h-7 w-7" />
+                <ChevronRight className="h-6 w-6 sm:h-7 sm:w-7" />
               </button>
             )}
 

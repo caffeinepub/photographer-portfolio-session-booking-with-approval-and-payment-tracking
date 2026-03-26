@@ -18,9 +18,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "@tanstack/react-router";
-import { DollarSign, Info, Loader2, Mail, MessageCircle } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Circle,
+  DollarSign,
+  Info,
+  Loader2,
+  Mail,
+  MessageCircle,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CONTACT_INFO } from "../constants/contactInfo";
@@ -29,9 +40,77 @@ import { useCreateBookingRequest } from "../hooks/useQueries";
 
 const DM_VALUE = "DM on Instagram (@_slr.pics_)";
 
+const STEPS = [
+  { number: 1, label: "Your Info" },
+  { number: 2, label: "Event Details" },
+  { number: 3, label: "Review" },
+];
+
+function StepIndicator({ currentStep }: { currentStep: number }) {
+  return (
+    <div
+      className="flex items-center justify-center mb-10"
+      data-ocid="booking.section"
+    >
+      {STEPS.map((step, idx) => (
+        <div key={step.number} className="flex items-center">
+          <div className="flex flex-col items-center gap-1.5">
+            <div
+              className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold border-2 transition-all duration-200 ${
+                step.number < currentStep
+                  ? "bg-foreground border-foreground text-background"
+                  : step.number === currentStep
+                    ? "bg-background border-foreground text-foreground shadow-sm"
+                    : "bg-background border-border text-muted-foreground"
+              }`}
+            >
+              {step.number < currentStep ? (
+                <CheckCircle2 className="w-5 h-5" />
+              ) : step.number === currentStep ? (
+                <Circle className="w-4 h-4 fill-foreground" />
+              ) : (
+                <span>{step.number}</span>
+              )}
+            </div>
+            <span
+              className={`text-xs font-medium ${
+                step.number === currentStep
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {step.label}
+            </span>
+          </div>
+          {idx < STEPS.length - 1 && (
+            <div
+              className={`h-px w-16 sm:w-24 mx-2 mb-5 transition-all duration-200 ${
+                step.number < currentStep ? "bg-foreground" : "bg-border"
+              }`}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  if (!value) return null;
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+      <span className="text-sm font-medium text-muted-foreground min-w-[140px]">
+        {label}
+      </span>
+      <span className="text-sm text-foreground">{value}</span>
+    </div>
+  );
+}
+
 export default function BookingPage() {
   const navigate = useNavigate();
   const createBooking = useCreateBookingRequest();
+  const [currentStep, setCurrentStep] = useState(1);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -120,10 +199,72 @@ export default function BookingPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleNextStep1 = () => {
+    if (!formData.name || !formData.email) {
+      toast.error("Please fill in your name and email");
+      return;
+    }
+    if (
+      formData.contactPreference === DM_VALUE &&
+      !formData.instagramHandle.trim()
+    ) {
+      toast.error("Please enter your Instagram handle");
+      return;
+    }
+    setCurrentStep(2);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleNextStep2 = () => {
+    if (!formData.sportType || !formData.date || !formData.time) {
+      toast.error("Please fill in the sport, date, and time");
+      return;
+    }
+    setCurrentStep(3);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goBack = (step: number) => {
+    setCurrentStep(step);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const sportLabel =
+    SPORT_TYPES.find((s) => s.value === formData.sportType)?.label ??
+    formData.sportType;
+
+  const formatTime = (t: string) => {
+    if (!t) return "";
+    const [h, m] = t.split(":");
+    const hour = Number.parseInt(h);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    return `${hour % 12 || 12}:${m} ${ampm}`;
+  };
+
+  const formatDate = (d: string) => {
+    if (!d) return "";
+    const [y, mo, day] = d.split("-");
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    return `${months[Number.parseInt(mo) - 1]} ${Number.parseInt(day)}, ${y}`;
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-12">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-10">
           <h1 className="font-serif text-5xl font-bold mb-4">
             Book a Sports Session
           </h1>
@@ -190,32 +331,37 @@ export default function BookingPage() {
           </Badge>
         </div>
 
+        {/* Step Indicator */}
+        <StepIndicator currentStep={currentStep} />
+
         <Card>
-          <CardHeader>
-            <CardTitle>Coverage Details</CardTitle>
-            <CardDescription>
-              Tell us about your sports event and we'll get back to you soon
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Contact Information */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg">Contact Information</h3>
+          {/* Step 1 — Your Info */}
+          {currentStep === 1 && (
+            <>
+              <CardHeader>
+                <CardTitle>Your Info</CardTitle>
+                <CardDescription>
+                  Tell us how to reach you after your request is reviewed
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name *</Label>
+                    <Label htmlFor="name">
+                      Full Name <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="name"
                       data-ocid="booking.input"
                       value={formData.name}
                       onChange={(e) => updateField("name", e.target.value)}
                       placeholder="John Doe"
-                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email *</Label>
+                    <Label htmlFor="email">
+                      Email <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="email"
                       data-ocid="booking.input"
@@ -223,12 +369,17 @@ export default function BookingPage() {
                       value={formData.email}
                       onChange={(e) => updateField("email", e.target.value)}
                       placeholder="john@example.com"
-                      required
                     />
                   </div>
                 </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
+                  <Label htmlFor="phone">
+                    Phone Number{" "}
+                    <span className="text-muted-foreground text-xs">
+                      (optional)
+                    </span>
+                  </Label>
                   <Input
                     id="phone"
                     data-ocid="booking.input"
@@ -239,7 +390,6 @@ export default function BookingPage() {
                   />
                 </div>
 
-                {/* Preferred Contact Method */}
                 <div className="space-y-3">
                   <Label>Preferred Contact Method</Label>
                   <RadioGroup
@@ -280,9 +430,10 @@ export default function BookingPage() {
                   </RadioGroup>
 
                   {formData.contactPreference === DM_VALUE && (
-                    <div className="space-y-2 pl-1">
+                    <div className="space-y-2 pl-1 pt-1">
                       <Label htmlFor="instagramHandle">
-                        Your Instagram Handle *
+                        Your Instagram Handle{" "}
+                        <span className="text-destructive">*</span>
                       </Label>
                       <Input
                         id="instagramHandle"
@@ -296,14 +447,37 @@ export default function BookingPage() {
                     </div>
                   )}
                 </div>
-              </div>
 
-              {/* Session Details */}
-              <div className="space-y-4 pt-6 border-t">
-                <h3 className="font-semibold text-lg">Coverage Details</h3>
+                <div className="pt-2 flex justify-end">
+                  <Button
+                    type="button"
+                    data-ocid="booking.primary_button"
+                    onClick={handleNextStep1}
+                    className="gap-2"
+                    size="lg"
+                  >
+                    Next: Event Details
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </>
+          )}
 
+          {/* Step 2 — Event Details */}
+          {currentStep === 2 && (
+            <>
+              <CardHeader>
+                <CardTitle>Event Details</CardTitle>
+                <CardDescription>
+                  Tell us about the sports event you want covered
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="sportType">Sport *</Label>
+                  <Label htmlFor="sportType">
+                    Sport <span className="text-destructive">*</span>
+                  </Label>
                   <Select
                     value={formData.sportType}
                     onValueChange={(value) => updateField("sportType", value)}
@@ -323,31 +497,38 @@ export default function BookingPage() {
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="date">Event Date *</Label>
+                    <Label htmlFor="date">
+                      Event Date <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="date"
                       data-ocid="booking.input"
                       type="date"
                       value={formData.date}
                       onChange={(e) => updateField("date", e.target.value)}
-                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="time">Event Time *</Label>
+                    <Label htmlFor="time">
+                      Event Time <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="time"
                       data-ocid="booking.input"
                       type="time"
                       value={formData.time}
                       onChange={(e) => updateField("time", e.target.value)}
-                      required
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="location">Venue/Location</Label>
+                  <Label htmlFor="location">
+                    Venue / Location{" "}
+                    <span className="text-muted-foreground text-xs">
+                      (optional)
+                    </span>
+                  </Label>
                   <Input
                     id="location"
                     data-ocid="booking.input"
@@ -358,19 +539,29 @@ export default function BookingPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Event Description</Label>
+                  <Label htmlFor="description">
+                    Event Description{" "}
+                    <span className="text-muted-foreground text-xs">
+                      (optional)
+                    </span>
+                  </Label>
                   <Textarea
                     id="description"
                     data-ocid="booking.textarea"
                     value={formData.description}
                     onChange={(e) => updateField("description", e.target.value)}
                     placeholder="Tell us about the game, match, or tournament..."
-                    rows={4}
+                    rows={3}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="additionalNotes">Additional Notes</Label>
+                  <Label htmlFor="additionalNotes">
+                    Additional Notes{" "}
+                    <span className="text-muted-foreground text-xs">
+                      (optional)
+                    </span>
+                  </Label>
                   <Textarea
                     id="additionalNotes"
                     data-ocid="booking.textarea"
@@ -382,26 +573,139 @@ export default function BookingPage() {
                     rows={3}
                   />
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                data-ocid="booking.submit_button"
-                disabled={createBooking.isPending}
-                className="w-full"
-                size="lg"
-              >
-                {createBooking.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Submitting...
-                  </>
-                ) : (
-                  "Submit Coverage Request"
-                )}
-              </Button>
-            </form>
-          </CardContent>
+                <div className="pt-2 flex items-center justify-between">
+                  <Button
+                    type="button"
+                    data-ocid="booking.secondary_button"
+                    variant="outline"
+                    onClick={() => goBack(1)}
+                    className="gap-2"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Back
+                  </Button>
+                  <Button
+                    type="button"
+                    data-ocid="booking.primary_button"
+                    onClick={handleNextStep2}
+                    className="gap-2"
+                    size="lg"
+                  >
+                    Review Request
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </>
+          )}
+
+          {/* Step 3 — Review & Submit */}
+          {currentStep === 3 && (
+            <>
+              <CardHeader>
+                <CardTitle>Review Your Request</CardTitle>
+                <CardDescription>
+                  Double-check everything before submitting
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Your Info Summary */}
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                      Your Info
+                    </h3>
+                    <div className="rounded-lg border border-border/60 bg-muted/20 px-5 py-4 space-y-3">
+                      <SummaryRow label="Full Name" value={formData.name} />
+                      <SummaryRow label="Email" value={formData.email} />
+                      {formData.phone && (
+                        <SummaryRow label="Phone" value={formData.phone} />
+                      )}
+                      <SummaryRow
+                        label="Contact Preference"
+                        value={formData.contactPreference}
+                      />
+                      {formData.contactPreference === DM_VALUE &&
+                        formData.instagramHandle && (
+                          <SummaryRow
+                            label="Instagram"
+                            value={formData.instagramHandle}
+                          />
+                        )}
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  {/* Event Details Summary */}
+                  <div className="space-y-3">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                      Event Details
+                    </h3>
+                    <div className="rounded-lg border border-border/60 bg-muted/20 px-5 py-4 space-y-3">
+                      <SummaryRow label="Sport" value={sportLabel} />
+                      <SummaryRow
+                        label="Date"
+                        value={formatDate(formData.date)}
+                      />
+                      <SummaryRow
+                        label="Time"
+                        value={formatTime(formData.time)}
+                      />
+                      {formData.location && (
+                        <SummaryRow
+                          label="Venue / Location"
+                          value={formData.location}
+                        />
+                      )}
+                      {formData.description && (
+                        <SummaryRow
+                          label="Description"
+                          value={formData.description}
+                        />
+                      )}
+                      {formData.additionalNotes && (
+                        <SummaryRow
+                          label="Additional Notes"
+                          value={formData.additionalNotes}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-between">
+                    <Button
+                      type="button"
+                      data-ocid="booking.secondary_button"
+                      variant="outline"
+                      onClick={() => goBack(2)}
+                      className="gap-2"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Back
+                    </Button>
+                    <Button
+                      type="submit"
+                      data-ocid="booking.submit_button"
+                      disabled={createBooking.isPending}
+                      size="lg"
+                      className="gap-2"
+                    >
+                      {createBooking.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        "Submit Coverage Request"
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </>
+          )}
         </Card>
       </div>
     </div>

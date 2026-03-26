@@ -1,28 +1,32 @@
 # slr.pics
 
 ## Current State
-The app has a `/contact` page combining both an "About the Photographer" bio section and contact info cards (phone, email, Instagram, TikTok). The `PageCTABar` has 4 buttons: Book Now, Check Availability, Client Photos, Leave a Review — all styled the same. The overall UI has a polished but generic AI-generated feel (heavy gradients, rounded cards everywhere, formulaic layouts).
+The booking page (`BookingPage.tsx`) is a single long scrollable form with all fields on one page — contact info, coverage details, notes, and contact method all stacked together. It works but can feel overwhelming. The confirmation page is a clean card.
 
 ## Requested Changes (Diff)
 
 ### Add
-- New `/about` route and `AboutPage.tsx` — contains profile picture, bio/about section (moved from ContactPage)
-- "Contact" button in `PageCTABar`, positioned to the RIGHT of all existing buttons, visually separated (e.g., a thin vertical divider or extra gap + distinct border styling) so it stands out as its own bordered group
+- Multi-step form UI with a progress indicator (Step 1: Your Info, Step 2: Event Details, Step 3: Review & Submit)
+- Step-by-step navigation (Next/Back buttons between steps)
+- Review step that shows a summary of all entered info before final submission
+- Visual step progress bar/indicator at the top of the form
 
 ### Modify
-- `ContactPage.tsx`: Remove the bio/about section entirely. Only show contact info: phone, email, Instagram, TikTok. Simplify layout — no heavy gradient backgrounds, less rounded styling, cleaner and more editorial
-- `PageCTABar.tsx`: Add Contact button on the far right, bordered by itself (visually distinct from the group of 4 buttons to its left)
-- `SiteHeader.tsx`: Rename "Contact" nav link to "About", pointing to `/about`. Add "Contact" somewhere in nav or keep it accessible via the CTA bar
-- `App.tsx`: Add `/about` route using the new `AboutPage`; update `/contact` route to use the stripped-down `ContactPage`
-- Overall UI cleanup: reduce AI-generic feel — flatten gradients, reduce excessive card rounding, simplify section spacing, use cleaner typography without heavy serif everywhere
+- Split existing form fields into 3 logical steps:
+  - Step 1: Full Name, Email, Phone, Preferred Contact Method (+ Instagram handle if DM selected)
+  - Step 2: Sport, Event Date, Time, Venue/Location, Event Description, Additional Notes
+  - Step 3: Read-only summary of all info with Submit button
+- Improve field labels and helper text for clarity
+- Confirmation page: add clearer summary of what was submitted (sport type, date, contact method)
 
 ### Remove
-- Bio/about section from `ContactPage.tsx` (moved to `AboutPage.tsx`)
+- Nothing removed; just reorganized into steps
 
 ## Implementation Plan
-1. Create `AboutPage.tsx` with profile picture (concert photo), bio from CONTACT_INFO, and clean editorial layout
-2. Rewrite `ContactPage.tsx` to be contact-info only (phone, email, Instagram, TikTok) — clean, simple, not overly card-heavy
-3. Update `PageCTABar.tsx`: add Contact button (`<Link to="/contact">`) to the right, separated visually from the other 4 buttons
-4. Update `SiteHeader.tsx`: nav "Contact" → "About" linking to `/about`; optionally add Contact link too
-5. Update `App.tsx`: add `/about` route with `AboutPage`, keep `/contact` route
-6. Clean up overall UI: reduce gradient overuse, simplify card styles, make it feel like a real photographer's site not a template
+1. Refactor `BookingPage.tsx` to a stepped form with local state tracking current step (0, 1, 2)
+2. Add a step progress indicator at top (Step 1 of 3 style with visual dots or numbered steps)
+3. Step 1: contact fields + contact method
+4. Step 2: sport/event fields
+5. Step 3: review summary (read-only) + submit button
+6. Validation per step before allowing Next
+7. Keep all existing submit logic and navigation to `/book/confirmation` intact

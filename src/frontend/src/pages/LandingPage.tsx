@@ -4,11 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "@tanstack/react-router";
 import {
+  Activity,
   CheckCircle,
   ChevronRight,
   Circle,
   Crosshair,
   Shield,
+  Timer,
 } from "lucide-react";
 import { useState } from "react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
@@ -81,8 +83,8 @@ export default function LandingPage() {
             <span className="italic font-normal">Photography</span>
           </h1>
           <p className="text-base md:text-lg mb-10 max-w-lg mx-auto text-white/70 font-light">
-            Capturing athletes in motion — baseball, basketball, and football
-            coverage across Louisiana.
+            Capturing athletes in motion — baseball, basketball, football,
+            soccer, track & field, and more across Louisiana.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button
@@ -114,7 +116,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-3 divide-x divide-background/10">
             {[
-              { stat: "3", label: "Sports Covered" },
+              { stat: "6+", label: "Sports Covered" },
               { stat: "LA", label: "Louisiana-Based" },
               { stat: "$20", label: "Starting Price" },
             ].map((item) => (
@@ -160,6 +162,18 @@ export default function LandingPage() {
                   desc: "Full game coverage from sideline to end zone",
                   icon: Shield,
                   sport: "football",
+                },
+                {
+                  label: "Soccer",
+                  desc: "Game coverage, action shots, match highlights",
+                  icon: Activity,
+                  sport: "soccer",
+                },
+                {
+                  label: "Track & Field",
+                  desc: "Meet coverage, individual and relay events",
+                  icon: Timer,
+                  sport: "track",
                 },
               ].map((item) => {
                 const Icon = item.icon;

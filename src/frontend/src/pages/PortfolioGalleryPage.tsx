@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGetAllPortfolioItems } from "../hooks/useQueries";
 
 const TABS = [
@@ -26,75 +26,67 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
-function Watermark() {
+function WatermarkedImage({
+  src,
+  alt,
+  className,
+  style,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.drawImage(img, 0, 0);
+
+      // Draw tiled watermark
+      ctx.save();
+      ctx.font = `bold ${Math.max(16, img.naturalWidth / 20)}px sans-serif`;
+      ctx.fillStyle = "rgba(255,255,255,0.25)";
+      ctx.textBaseline = "middle";
+
+      const text = "slr.pics";
+      const tileW = img.naturalWidth / 4;
+      const tileH = img.naturalHeight / 4;
+
+      for (let row = -1; row <= 5; row++) {
+        for (let col = -1; col <= 5; col++) {
+          ctx.save();
+          const x = col * tileW + (row % 2 === 0 ? 0 : tileW / 2);
+          const y = row * tileH;
+          ctx.translate(x + tileW / 2, y + tileH / 2);
+          ctx.rotate((-30 * Math.PI) / 180);
+          ctx.fillText(text, 0, 0);
+          ctx.restore();
+        }
+      }
+      ctx.restore();
+    };
+    img.src = src;
+  }, [src]);
+
   return (
-    <div
-      className="absolute inset-0 pointer-events-none select-none overflow-hidden"
-      aria-hidden="true"
-    >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage:
-            "repeating-linear-gradient(135deg, transparent, transparent 60px, rgba(255,255,255,0.07) 60px, rgba(255,255,255,0.07) 61px)",
-        }}
-      />
-      {(
-        [
-          [8, 5],
-          [8, 33],
-          [8, 61],
-          [8, 89],
-          [28, 5],
-          [28, 33],
-          [28, 61],
-          [28, 89],
-          [48, 5],
-          [48, 33],
-          [48, 61],
-          [48, 89],
-          [68, 5],
-          [68, 33],
-          [68, 61],
-          [68, 89],
-          [88, 5],
-          [88, 33],
-          [88, 61],
-          [88, 89],
-          [18, 19],
-          [18, 47],
-          [18, 75],
-          [38, 19],
-          [38, 47],
-          [38, 75],
-          [58, 19],
-          [58, 47],
-          [58, 75],
-          [78, 19],
-          [78, 47],
-          [78, 75],
-        ] as [number, number][]
-      ).map(([top, left]) => (
-        <span
-          key={`wm-${top}-${left}`}
-          style={{
-            position: "absolute",
-            top: `${top}%`,
-            left: `${left}%`,
-            color: "rgba(255,255,255,0.18)",
-            fontSize: "11px",
-            fontWeight: 700,
-            letterSpacing: "0.1em",
-            transform: "rotate(-30deg)",
-            whiteSpace: "nowrap",
-            textShadow: "0 1px 2px rgba(0,0,0,0.4)",
-          }}
-        >
-          slr.pics
-        </span>
-      ))}
-    </div>
+    <canvas
+      ref={canvasRef}
+      className={className}
+      style={style}
+      onContextMenu={(e) => e.preventDefault()}
+      draggable={false}
+      aria-label={alt}
+    />
   );
 }
 
@@ -247,12 +239,15 @@ export default function PortfolioGalleryPage() {
                   onClick={() => openLightbox(idx)}
                   className="group relative aspect-[4/5] overflow-hidden rounded-sm shadow-elegant hover:shadow-elegant-lg transition-all duration-300 text-left w-full"
                 >
-                  <img
+                  <WatermarkedImage
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
                   />
-                  <Watermark />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                       <Badge variant="secondary" className="mb-2">
@@ -336,12 +331,11 @@ export default function PortfolioGalleryPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative">
-                <img
+                <WatermarkedImage
                   src={lightboxItem.imageUrl}
                   alt={lightboxItem.title}
-                  className="max-w-[90vw] max-h-[75vh] object-contain rounded-sm"
+                  className="max-w-[90vw] max-h-[75vh] rounded-sm"
                 />
-                <Watermark />
               </div>
               <div className="mt-4 text-center text-white">
                 <h3 className="font-serif text-xl font-semibold">

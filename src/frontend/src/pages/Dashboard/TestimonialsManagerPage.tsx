@@ -46,10 +46,8 @@ export default function TestimonialsManagerPage() {
         quote: form.quote.trim(),
         sport: form.sport.trim() || null,
       });
-      // Auto-approve admin-added testimonials
-      if (result && typeof result === "object" && "id" in result) {
-        await toggleApproval.mutateAsync((result as any).id);
-      }
+      // result is a bigint (the new testimonial id); auto-approve it
+      await toggleApproval.mutateAsync(result);
       toast.success("Testimonial added and published!");
       setForm({ clientName: "", quote: "", sport: "" });
     } catch {

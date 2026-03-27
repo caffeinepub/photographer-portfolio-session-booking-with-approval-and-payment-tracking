@@ -50,7 +50,7 @@ import {
   useRemovePhotoFromAlbum,
   useUpdateAlbum,
 } from "../../hooks/useQueries";
-import { processImageFile } from "../../utils/imageDataUrl";
+import { useStorageUpload } from "../../hooks/useStorageUpload";
 
 type Mode = "list" | "manage-photos";
 
@@ -70,137 +70,24 @@ const emptyForm: AlbumFormData = {
   coverPhotoUrl: "",
 };
 
-export default function AlbumManagerPage() {
-  const { data: albums = [], isLoading } = useGetAllAlbums();
-  const createAlbum = useCreateAlbum();
-  const updateAlbum = useUpdateAlbum();
-  const deleteAlbum = useDeleteAlbum();
-  const addPhoto = useAddPhotoToAlbum();
-  const removePhoto = useRemovePhotoFromAlbum();
-
-  const [mode, setMode] = useState<Mode>("list");
-  const [managingAlbum, setManagingAlbum] = useState<ClientAlbum | null>(null);
-
-  const [createOpen, setCreateOpen] = useState(false);
-  const [editAlbum, setEditAlbum] = useState<ClientAlbum | null>(null);
-  const [deleteAlbumTarget, setDeleteAlbumTarget] =
-    useState<ClientAlbum | null>(null);
-
-  const [form, setForm] = useState<AlbumFormData>(emptyForm);
-  const [coverUploading, setCoverUploading] = useState(false);
-  const [photosUploading, setPhotosUploading] = useState(false);
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const photosInputRef = useRef<HTMLInputElement>(null);
-
-  const handleOpenCreate = () => {
-    setForm(emptyForm);
-    setCreateOpen(true);
-  };
-
-  const handleOpenEdit = (album: ClientAlbum) => {
-    setForm({
-      name: album.name,
-      clientName: album.clientName,
-      description: album.description,
-      password: album.password,
-      coverPhotoUrl: album.coverPhotoUrl,
-    });
-    setEditAlbum(album);
-  };
-
-  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setCoverUploading(true);
-    try {
-      const dataUrl = await processImageFile(file);
-      setForm((prev) => ({ ...prev, coverPhotoUrl: dataUrl }));
-      toast.success("Cover uploaded");
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to upload cover");
-    } finally {
-      setCoverUploading(false);
-    }
-  };
-
-  const handleCreateSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await createAlbum.mutateAsync(form);
-      toast.success("Album created!");
-      setCreateOpen(false);
-    } catch {
-      toast.error("Failed to create album");
-    }
-  };
-
-  const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editAlbum) return;
-    try {
-      await updateAlbum.mutateAsync({ id: editAlbum.id, ...form });
-      toast.success("Album updated!");
-      setEditAlbum(null);
-    } catch {
-      toast.error("Failed to update album");
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!deleteAlbumTarget) return;
-    try {
-      await deleteAlbum.mutateAsync(deleteAlbumTarget.id);
-      toast.success("Album deleted");
-      setDeleteAlbumTarget(null);
-    } catch {
-      toast.error("Failed to delete album");
-    }
-  };
-
-  const handleManagePhotos = (album: ClientAlbum) => {
-    setManagingAlbum(album);
-    setMode("manage-photos");
-  };
-
-  const handleAddPhotos = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    if (!files.length || !managingAlbum) return;
-    setPhotosUploading(true);
-    try {
-      await Promise.all(
-        files.map(async (file) => {
-          const dataUrl = await processImageFile(file);
-          await addPhoto.mutateAsync({
-            albumId: managingAlbum.id,
-            photoUrl: dataUrl,
-          });
-        }),
-      );
-      toast.success(
-        `${files.length} photo${files.length > 1 ? "s" : ""} added`,
-      );
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to add some photos");
-    } finally {
-      setPhotosUploading(false);
-      if (photosInputRef.current) photosInputRef.current.value = "";
-    }
-  };
-
-  const handleRemovePhoto = async (photoUrl: string) => {
-    if (!managingAlbum) return;
-    try {
-      await removePhoto.mutateAsync({ albumId: managingAlbum.id, photoUrl });
-      toast.success("Removed");
-    } catch {
-      toast.error("Failed to remove");
-    }
-  };
-
-  const AlbumForm = ({
-    onSubmit,
-    isPending,
-  }: { onSubmit: (e: React.FormEvent) => void; isPending: boolean }) => (
+function AlbumForm({
+  form,
+  setForm,
+  onSubmit,
+  isPending,
+  coverUploading,
+  onCoverUpload,
+  coverInputRef,
+}: {
+  form: AlbumFormData;
+  setForm: React.Dispatch<React.SetStateAction<AlbumFormData>>;
+  onSubmit: (e: React.FormEvent) => void;
+  isPending: boolean;
+  coverUploading: boolean;
+  onCoverUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  coverInputRef: React.RefObject<HTMLInputElement | null>;
+}) {
+  return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
@@ -254,7 +141,7 @@ export default function AlbumManagerPage() {
         />
       </div>
       <div className="space-y-2">
-        <Label>Cover</Label>
+        <Label>Cover Photo</Label>
         <div className="flex items-center gap-3">
           {form.coverPhotoUrl && (
             <img
@@ -283,7 +170,7 @@ export default function AlbumManagerPage() {
             type="file"
             accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
             className="hidden"
-            onChange={handleCoverUpload}
+            onChange={onCoverUpload}
           />
         </div>
       </div>
@@ -299,6 +186,145 @@ export default function AlbumManagerPage() {
       </DialogFooter>
     </form>
   );
+}
+
+export default function AlbumManagerPage() {
+  const { data: albums = [], isLoading } = useGetAllAlbums();
+  const createAlbum = useCreateAlbum();
+  const updateAlbum = useUpdateAlbum();
+  const deleteAlbum = useDeleteAlbum();
+  const addPhoto = useAddPhotoToAlbum();
+  const removePhoto = useRemovePhotoFromAlbum();
+  const { uploadFile } = useStorageUpload();
+
+  const [mode, setMode] = useState<Mode>("list");
+  const [managingAlbum, setManagingAlbum] = useState<ClientAlbum | null>(null);
+
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editAlbum, setEditAlbum] = useState<ClientAlbum | null>(null);
+  const [deleteAlbumTarget, setDeleteAlbumTarget] =
+    useState<ClientAlbum | null>(null);
+
+  const [form, setForm] = useState<AlbumFormData>(emptyForm);
+  const [coverUploading, setCoverUploading] = useState(false);
+  const [photosUploading, setPhotosUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const coverInputRef = useRef<HTMLInputElement>(null);
+  const photosInputRef = useRef<HTMLInputElement>(null);
+
+  const handleOpenCreate = () => {
+    setForm(emptyForm);
+    setCreateOpen(true);
+  };
+
+  const handleOpenEdit = (album: ClientAlbum) => {
+    setForm({
+      name: album.name,
+      clientName: album.clientName,
+      description: album.description,
+      password: album.password,
+      coverPhotoUrl: album.coverPhotoUrl,
+    });
+    setEditAlbum(album);
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverUploading(true);
+    try {
+      const url = await uploadFile(file);
+      setForm((prev) => ({ ...prev, coverPhotoUrl: url }));
+      toast.success("Cover uploaded");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to upload cover");
+    } finally {
+      setCoverUploading(false);
+    }
+  };
+
+  const handleCreateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createAlbum.mutateAsync(form);
+      toast.success("Album created!");
+      setCreateOpen(false);
+    } catch {
+      toast.error("Failed to create album");
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editAlbum) return;
+    try {
+      await updateAlbum.mutateAsync({ id: editAlbum.id, ...form });
+      toast.success("Album updated!");
+      setEditAlbum(null);
+    } catch {
+      toast.error("Failed to update album");
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteAlbumTarget) return;
+    try {
+      await deleteAlbum.mutateAsync(deleteAlbumTarget.id);
+      toast.success("Album deleted");
+      setDeleteAlbumTarget(null);
+    } catch {
+      toast.error("Failed to delete album");
+    }
+  };
+
+  const handleManagePhotos = (album: ClientAlbum) => {
+    setManagingAlbum(album);
+    setMode("manage-photos");
+  };
+
+  const handleAddPhotos = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length || !managingAlbum) return;
+    setPhotosUploading(true);
+    setUploadProgress(0);
+    let completed = 0;
+    try {
+      // Upload one at a time to avoid overwhelming the storage gateway
+      for (const file of files) {
+        const url = await uploadFile(file, (pct) => {
+          // pct is per-file; show overall progress
+          setUploadProgress(
+            Math.round(((completed + pct / 100) / files.length) * 100),
+          );
+        });
+        await addPhoto.mutateAsync({
+          albumId: managingAlbum.id,
+          photoUrl: url,
+        });
+        completed += 1;
+        setUploadProgress(Math.round((completed / files.length) * 100));
+      }
+      toast.success(
+        `${files.length} photo${files.length > 1 ? "s" : ""} added`,
+      );
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to add some photos");
+    } finally {
+      setPhotosUploading(false);
+      setUploadProgress(0);
+      if (photosInputRef.current) photosInputRef.current.value = "";
+    }
+  };
+
+  const handleRemovePhoto = async (photoUrl: string) => {
+    if (!managingAlbum) return;
+    try {
+      await removePhoto.mutateAsync({ albumId: managingAlbum.id, photoUrl });
+      toast.success("Removed");
+    } catch {
+      toast.error("Failed to remove");
+    }
+  };
 
   if (mode === "manage-photos" && managingAlbum) {
     const freshAlbum =
@@ -328,9 +354,12 @@ export default function AlbumManagerPage() {
           <Card>
             <CardHeader>
               <CardTitle>Add Photos</CardTitle>
-              <CardDescription>Upload new photos to this album</CardDescription>
+              <CardDescription>
+                Upload new photos to this album. Photos are stored securely and
+                accessible via a direct link — no size limits.
+              </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
               <Button
                 variant="outline"
                 disabled={photosUploading}
@@ -342,8 +371,18 @@ export default function AlbumManagerPage() {
                 ) : (
                   <Plus className="h-4 w-4 mr-2" />
                 )}
-                {photosUploading ? "Uploading..." : "Add Photos"}
+                {photosUploading
+                  ? `Uploading... ${uploadProgress}%`
+                  : "Add Photos"}
               </Button>
+              {photosUploading && uploadProgress > 0 && (
+                <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="bg-primary h-1.5 rounded-full transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+              )}
               <input
                 ref={photosInputRef}
                 type="file"
@@ -519,8 +558,13 @@ export default function AlbumManagerPage() {
             </DialogDescription>
           </DialogHeader>
           <AlbumForm
+            form={form}
+            setForm={setForm}
             onSubmit={handleCreateSubmit}
             isPending={createAlbum.isPending}
+            coverUploading={coverUploading}
+            onCoverUpload={handleCoverUpload}
+            coverInputRef={coverInputRef}
           />
         </DialogContent>
       </Dialog>
@@ -533,8 +577,13 @@ export default function AlbumManagerPage() {
             <DialogDescription>Update the album details.</DialogDescription>
           </DialogHeader>
           <AlbumForm
+            form={form}
+            setForm={setForm}
             onSubmit={handleEditSubmit}
             isPending={updateAlbum.isPending}
+            coverUploading={coverUploading}
+            onCoverUpload={handleCoverUpload}
+            coverInputRef={coverInputRef}
           />
         </DialogContent>
       </Dialog>

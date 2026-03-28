@@ -1,11 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Link } from "@tanstack/react-router";
 import {
   Activity,
-  CheckCircle,
   ChevronRight,
   Circle,
   Crosshair,
@@ -14,55 +10,20 @@ import {
   Timer,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
-import { toast } from "sonner";
 import {
   useGetAllPortfolioItems,
-  useGetApprovedTestimonials,
   useGetHeroBackground,
-  useSubmitTestimonial,
 } from "../hooks/useQueries";
 
 export default function LandingPage() {
   const { data: portfolioItems = [] } = useGetAllPortfolioItems();
   const { data: heroBackground = "" } = useGetHeroBackground();
-  const { data: testimonials = [] } = useGetApprovedTestimonials();
-  const submitTestimonial = useSubmitTestimonial();
   const featuredItems = portfolioItems.slice(0, 3);
-
-  const [reviewForm, setReviewForm] = useState({
-    name: "",
-    quote: "",
-    sport: "",
-  });
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
-  const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
   const heroBg =
     heroBackground ||
     "/assets/generated/photography-hero-sports-concert.dim_1920x1080.png";
-
-  const handleReviewSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!reviewForm.name.trim() || !reviewForm.quote.trim()) {
-      toast.error("Please fill in your name and review.");
-      return;
-    }
-    setReviewSubmitting(true);
-    try {
-      await submitTestimonial.mutateAsync({
-        clientName: reviewForm.name.trim(),
-        quote: reviewForm.quote.trim(),
-        sport: reviewForm.sport.trim() || null,
-      });
-      setReviewSubmitted(true);
-    } catch {
-      toast.error("Failed to submit your review. Please try again.");
-    } finally {
-      setReviewSubmitting(false);
-    }
-  };
 
   return (
     <div className="flex flex-col">
@@ -257,7 +218,6 @@ export default function LandingPage() {
                         </h3>
                       </div>
                     </div>
-                    {/* Category label on hover */}
                     <div className="absolute top-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <span className="text-[10px] font-semibold tracking-widest uppercase bg-black/60 backdrop-blur-sm text-white/80 px-2 py-1 rounded-sm">
                         {item.category}
@@ -282,153 +242,6 @@ export default function LandingPage() {
                 <Link to="/portfolio">Go to Portfolio</Link>
               </Button>
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      {testimonials.length > 0 && (
-        <section className="py-20 bg-muted/30">
-          <div className="container mx-auto px-4">
-            <div className="mb-10">
-              <p className="text-xs font-medium tracking-widest uppercase text-muted-foreground mb-3">
-                Reviews
-              </p>
-              <h2 className="font-serif text-4xl font-bold">
-                What Clients Say
-              </h2>
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl">
-              {testimonials.map((t, i) => (
-                <div
-                  key={t.id.toString()}
-                  data-ocid={`testimonials.item.${i + 1}`}
-                  className="relative pl-5 border-l-2 border-foreground/15 py-2"
-                >
-                  <span className="block font-serif text-5xl leading-none text-foreground/10 mb-3 select-none">
-                    &ldquo;
-                  </span>
-                  <p className="text-foreground/75 leading-relaxed italic text-sm mb-5">
-                    {t.quote}
-                  </p>
-                  <div>
-                    <p className="font-semibold text-sm text-foreground">
-                      {t.clientName}
-                    </p>
-                    {t.sport && (
-                      <p className="text-xs text-muted-foreground capitalize mt-0.5">
-                        {t.sport}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Submit a Review */}
-      <section id="leave-review" className="py-20 bg-foreground">
-        <div className="container mx-auto px-4 max-w-xl">
-          <div className="mb-10">
-            <p className="text-xs font-medium tracking-[0.2em] uppercase text-background/40 mb-3">
-              Client Reviews
-            </p>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-background">
-              Share Your Experience
-            </h2>
-            <p className="text-background/50 text-sm mt-3 leading-relaxed">
-              Worked with Slade? Leave a review — it will appear on the site
-              once approved.
-            </p>
-          </div>
-
-          {reviewSubmitted ? (
-            <div
-              data-ocid="review.success_state"
-              className="flex flex-col items-center gap-4 py-10 text-center"
-            >
-              <CheckCircle className="h-12 w-12 text-green-400" />
-              <p className="text-background font-semibold text-lg">
-                Thanks for your review!
-              </p>
-              <p className="text-background/50 text-sm max-w-xs">
-                Your submission has been received and will appear on the site
-                once approved.
-              </p>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleReviewSubmit}
-              className="space-y-4"
-              data-ocid="review.panel"
-            >
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="review-name"
-                  className="text-background/70 text-sm"
-                >
-                  Your Name *
-                </Label>
-                <Input
-                  id="review-name"
-                  data-ocid="review.input"
-                  value={reviewForm.name}
-                  onChange={(e) =>
-                    setReviewForm((p) => ({ ...p, name: e.target.value }))
-                  }
-                  placeholder="e.g. Marcus Johnson"
-                  className="bg-transparent border-background/30 text-background placeholder:text-background/25 focus:border-background/50"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="review-sport"
-                  className="text-background/70 text-sm"
-                >
-                  Sport (optional)
-                </Label>
-                <Input
-                  id="review-sport"
-                  data-ocid="review.input"
-                  value={reviewForm.sport}
-                  onChange={(e) =>
-                    setReviewForm((p) => ({ ...p, sport: e.target.value }))
-                  }
-                  placeholder="e.g. Baseball"
-                  className="bg-transparent border-background/30 text-background placeholder:text-background/25 focus:border-background/50"
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label
-                  htmlFor="review-quote"
-                  className="text-background/70 text-sm"
-                >
-                  Your Review *
-                </Label>
-                <Textarea
-                  id="review-quote"
-                  data-ocid="review.textarea"
-                  value={reviewForm.quote}
-                  onChange={(e) =>
-                    setReviewForm((p) => ({ ...p, quote: e.target.value }))
-                  }
-                  placeholder="Tell us about your experience..."
-                  rows={4}
-                  className="bg-transparent border-background/30 text-background placeholder:text-background/25 focus:border-background/50 resize-none"
-                />
-              </div>
-              <Button
-                type="submit"
-                data-ocid="review.submit_button"
-                disabled={reviewSubmitting}
-                variant="secondary"
-                className="w-full"
-              >
-                {reviewSubmitting ? "Submitting..." : "Submit Review"}
-              </Button>
-            </form>
           )}
         </div>
       </section>
@@ -471,7 +284,6 @@ export default function LandingPage() {
             behind-the-scenes moments.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            {/* Instagram — real gradient bubble */}
             <a
               href="https://www.instagram.com/_slr.pics_"
               target="_blank"
@@ -488,7 +300,6 @@ export default function LandingPage() {
               Instagram
             </a>
 
-            {/* TikTok — brand black with duotone icon glow */}
             <a
               href="https://www.tiktok.com/@_slr.pics_?_r=1&_t=ZP-93qjJcBT9Re"
               target="_blank"

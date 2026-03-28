@@ -19,7 +19,6 @@ import {
   FolderOpen,
   Image,
   Loader2,
-  MessageSquare,
   Rocket,
   Upload,
 } from "lucide-react";
@@ -370,23 +369,6 @@ export default function DashboardHomePage() {
                   <Link to="/dashboard/availability">
                     <CalendarDays className="mr-2 h-4 w-4" />
                     Manage Availability
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Testimonials</CardTitle>
-                <CardDescription>
-                  Manage client reviews shown on the homepage
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button asChild className="w-full">
-                  <Link to="/dashboard/testimonials">
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    Manage Reviews
                   </Link>
                 </Button>
               </CardContent>

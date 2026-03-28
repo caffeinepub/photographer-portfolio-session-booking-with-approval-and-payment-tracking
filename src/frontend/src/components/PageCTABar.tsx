@@ -1,24 +1,6 @@
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 
 export default function PageCTABar() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleLeaveReview = () => {
-    const scrollToReview = () => {
-      document
-        .getElementById("leave-review")
-        ?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    if (location.pathname === "/") {
-      scrollToReview();
-    } else {
-      navigate({ to: "/" });
-      setTimeout(scrollToReview, 100);
-    }
-  };
-
   const btnClass =
     "border border-foreground px-5 py-2 text-sm font-medium tracking-wide hover:bg-foreground/5 transition-colors";
 
@@ -62,14 +44,6 @@ export default function PageCTABar() {
             >
               Client Photos
             </Link>
-            <button
-              type="button"
-              className={`${btnClass} cursor-pointer`}
-              data-ocid="cta.open_modal_button"
-              onClick={handleLeaveReview}
-            >
-              Leave a Review
-            </button>
             <Link
               to="/contact"
               className={btnClass}

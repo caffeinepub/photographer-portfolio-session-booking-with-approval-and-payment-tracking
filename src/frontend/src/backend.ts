@@ -196,6 +196,7 @@ export interface backendInterface {
     createBookingRequest(client: ClientDetails, session: SessionDetails): Promise<bigint>;
     createPortfolioItem(title: string, description: string, imageUrl: string, category: string): Promise<bigint>;
     createTestimonial(clientName: string, quote: string, sport: string | null): Promise<bigint>;
+    submitTestimonial(clientName: string, quote: string, sport: string | null): Promise<bigint>;
     deleteAlbum(id: bigint): Promise<void>;
     deletePortfolioItem(id: bigint): Promise<void>;
     deleteTestimonial(id: bigint): Promise<void>;
@@ -439,6 +440,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.createTestimonial(arg0, arg1, to_candid_opt_n8(this._uploadFile, this._downloadFile, arg2));
+            return result;
+        }
+    }
+    async submitTestimonial(arg0: string, arg1: string, arg2: string | null): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.submitTestimonial(arg0, arg1, to_candid_opt_n8(this._uploadFile, this._downloadFile, arg2));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.submitTestimonial(arg0, arg1, to_candid_opt_n8(this._uploadFile, this._downloadFile, arg2));
             return result;
         }
     }

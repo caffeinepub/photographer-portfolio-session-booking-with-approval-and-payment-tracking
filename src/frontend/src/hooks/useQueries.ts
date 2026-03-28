@@ -316,14 +316,16 @@ export function useListAlbums() {
 
 export function useGetAllAlbums() {
   const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  const principalKey = identity?.getPrincipal().toString() ?? "anonymous";
 
   return useQuery<ClientAlbum[]>({
-    queryKey: ["allAlbums"],
+    queryKey: ["allAlbums", principalKey],
     queryFn: async () => {
       if (!actor) return [];
       return actor.getAllAlbums();
     },
-    enabled: !!actor && !isFetching,
+    enabled: !!actor && !isFetching && principalKey !== "anonymous",
   });
 }
 
@@ -608,11 +610,7 @@ export function useSubmitTestimonial() {
       sport: string | null;
     }) => {
       if (!actor) throw new Error("Actor not available");
-      return (actor as any).submitTestimonial(
-        data.clientName,
-        data.quote,
-        data.sport,
-      );
+      return actor.submitTestimonial(data.clientName, data.quote, data.sport);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["allTestimonials"] });

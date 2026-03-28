@@ -147,6 +147,7 @@ export interface _SERVICE {
   'setHeroBackground' : ActorMethod<[string], undefined>,
   'setUnavailableDates' : ActorMethod<[Array<string>], undefined>,
   'toggleTestimonialApproval' : ActorMethod<[bigint], undefined>,
+  'submitTestimonial' : ActorMethod<[string, string, [] | [string]], bigint>,
   'updateAlbum' : ActorMethod<
     [bigint, string, string, string, string, string],
     undefined

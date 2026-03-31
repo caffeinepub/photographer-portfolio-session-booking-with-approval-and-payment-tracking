@@ -27,16 +27,27 @@ export function useActor() {
 
       const actor = await createActorWithConfig(actorOptions);
       const adminToken = getSecretParameter("caffeineAdminToken") || "";
-      await actor._initializeAccessControlWithSecret(adminToken);
+
+      // Initialize access control — wrapped in try/catch so a failed token
+      // never blocks the actor from being returned for non-admin operations.
+      try {
+        await (actor as any)._initializeAccessControlWithSecret(adminToken);
+      } catch {
+        // Token missing or invalid — user won't have admin rights but the
+        // actor is still usable for everything else.
+        console.warn(
+          "Admin token initialization failed — dashboard will be hidden.",
+        );
+      }
+
       return actor;
     },
     // Only refetch when identity changes
     staleTime: Number.POSITIVE_INFINITY,
-    // This will cause the actor to be recreated when the identity changes
     enabled: true,
   });
 
-  // When the actor changes, invalidate dependent queries
+  // When the actor changes, invalidate and refetch dependent queries
   useEffect(() => {
     if (actorQuery.data) {
       queryClient.invalidateQueries({

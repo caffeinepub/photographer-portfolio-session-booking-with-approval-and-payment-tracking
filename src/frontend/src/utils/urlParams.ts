@@ -107,11 +107,6 @@ export function clearSessionParameter(key: string): void {
  * Used to remove sensitive data from the address bar after extracting it
  *
  * @param paramName - The parameter to remove from the hash
- *
- * @example
- * // URL: https://app.com/#/dashboard?caffeineAdminToken=xxx&other=value
- * // After clearParamFromHash('caffeineAdminToken')
- * // URL: https://app.com/#/dashboard?other=value
  */
 function clearParamFromHash(paramName: string): void {
   if (!window.history.replaceState) {
@@ -158,57 +153,38 @@ function clearParamFromHash(paramName: string): void {
 }
 
 /**
- * Gets a secret from the URL hash fragment only (more secure than query params)
- * Hash fragments aren't sent to servers or logged in access logs
- * The hash is immediately cleared from the URL after extraction to prevent history leakage
+ * Gets the admin token from URL (regular query params OR hash-based routing)
+ * and persists it in sessionStorage for the duration of the session.
  *
- * Usage: https://yourapp.com/#secret=xxx
- *
- * @param paramName - The name of the secret parameter
- * @returns The secret value if found (from hash or session), null otherwise
- */
-export function getSecretFromHash(paramName: string): string | null {
-  // Check session first to avoid unnecessary URL manipulation
-  const existingSecret = getSessionParameter(paramName);
-  if (existingSecret !== null) {
-    return existingSecret;
-  }
-
-  // Try to extract from hash
-  const hash = window.location.hash;
-  if (!hash || hash.length <= 1) {
-    return null;
-  }
-
-  // Remove the leading #
-  const hashContent = hash.substring(1);
-  const params = new URLSearchParams(hashContent);
-  const secret = params.get(paramName);
-
-  if (secret) {
-    // Store in session for persistence
-    storeSessionParameter(paramName, secret);
-    // Immediately clear the secret parameter from URL to avoid history leakage
-    clearParamFromHash(paramName);
-    return secret;
-  }
-
-  return null;
-}
-
-/**
- * Gets a secret parameter with fallback chain: hash -> sessionStorage
- * This is the recommended way to handle sensitive parameters like admin tokens
- *
- * Security benefits over regular URL params:
- * - Hash fragments are not sent to the server
- * - Not logged in server access logs
- * - Not sent in HTTP Referer headers
- * - Automatically cleared from URL after extraction
+ * Handles all Caffeine link formats:
+ *  - https://app.ic0.app/?caffeineAdminToken=TOKEN   (regular query param)
+ *  - https://app.ic0.app/#/?caffeineAdminToken=TOKEN  (hash-based routing)
  *
  * @param paramName - The name of the secret parameter
  * @returns The secret value if found, null otherwise
  */
 export function getSecretParameter(paramName: string): string | null {
-  return getSecretFromHash(paramName);
+  // Check session storage first so we don't re-parse the URL on every call
+  const cached = getSessionParameter(paramName);
+  if (cached !== null) {
+    return cached;
+  }
+
+  // Use getUrlParameter which correctly handles both regular query strings
+  // AND hash-based routing (the previous getSecretFromHash implementation
+  // had a bug where it parsed the entire hash as a flat query string,
+  // causing "#/route?caffeineAdminToken=TOKEN" to fail)
+  const urlValue = getUrlParameter(paramName);
+  if (urlValue !== null) {
+    // Persist for the rest of the session
+    storeSessionParameter(paramName, urlValue);
+    // Best-effort cleanup of the token from the URL bar
+    clearParamFromHash(paramName);
+    return urlValue;
+  }
+
+  return null;
 }
+
+// Keep getSecretFromHash as an alias so nothing else breaks
+export const getSecretFromHash = getSecretParameter;

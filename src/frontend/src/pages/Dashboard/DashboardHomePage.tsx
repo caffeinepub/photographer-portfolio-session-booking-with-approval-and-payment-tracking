@@ -19,6 +19,7 @@ import {
   FolderOpen,
   Image,
   Loader2,
+  MessageSquare,
   Rocket,
   Upload,
 } from "lucide-react";
@@ -74,7 +75,6 @@ export default function DashboardHomePage() {
       toast.error(`Invalid domain: ${error}`);
       return;
     }
-
     setIsPublishing(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -266,7 +266,6 @@ export default function DashboardHomePage() {
                 <div className="text-2xl font-bold">{pendingCount}</div>
               </CardContent>
             </Card>
-
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -278,7 +277,6 @@ export default function DashboardHomePage() {
                 <div className="text-2xl font-bold">{acceptedCount}</div>
               </CardContent>
             </Card>
-
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -290,7 +288,6 @@ export default function DashboardHomePage() {
                 <div className="text-2xl font-bold">{bookings.length}</div>
               </CardContent>
             </Card>
-
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -369,6 +366,23 @@ export default function DashboardHomePage() {
                   <Link to="/dashboard/availability">
                     <CalendarDays className="mr-2 h-4 w-4" />
                     Manage Availability
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Testimonials</CardTitle>
+                <CardDescription>
+                  Review and approve client testimonials
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="w-full">
+                  <Link to="/dashboard/testimonials">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Manage Reviews
                   </Link>
                 </Button>
               </CardContent>

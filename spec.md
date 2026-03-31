@@ -1,52 +1,35 @@
 # slr.pics
 
 ## Current State
-The home page (LandingPage.tsx) has:
-- Hero section with background image, headline, and two CTA buttons
-- Specialties section (text rows for Baseball, Basketball, Football)
-- Featured Work grid (shows 3 portfolio items)
-- Testimonials grid (when data exists)
-- Submit a Review form section
-- CTA section (dark primary background with booking prompt)
-- Social Follow section (Instagram + TikTok buttons)
+Testimonials were removed entirely from the frontend after persistent submission errors. The backend still has all testimonial functions intact:
+- `submitTestimonial(clientName, quote, sport)` — public, no auth required
+- `getApprovedTestimonials()` — public query
+- `getAllTestimonials()` — admin only
+- `toggleTestimonialApproval(id)` — admin only
+- `deleteTestimonial(id)` — admin only
 
-Issues:
-- Hero headline is generic/AI-sounding
-- No immediate visual identity or name
-- Specialties section is sparse and minimal
-- Featured Work grid doesn't show well when empty
-- Submit a Review form is buried at the bottom and blends in
-- CTA section is repetitive with hero CTAs
-- No visual hook or personality — feels bland
+TestimonialsManagerPage.tsx currently just shows a placeholder message. LandingPage.tsx has no testimonial section. useQueries.ts has no testimonial hooks.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Photographer name "Slade Robert" and brand "slr.pics" prominently in the hero
-- A brief tagline that communicates what makes this photographer different (local Louisiana sports photographer)
-- A visual stats/badge bar (e.g., sports covered, years active, etc.) right below hero
-- Better visual separation between sections
-- "Book a Session" secondary CTA added near the specialties section
+- Testimonial hooks in useQueries.ts: `useGetApprovedTestimonials`, `useSubmitTestimonial`, `useGetAllTestimonials`, `useToggleTestimonialApproval`, `useDeleteTestimonial`
+- Testimonials display section on LandingPage.tsx — shows approved testimonials (name + quote only, no sport)
+- Testimonial submission form on LandingPage.tsx — just two fields: Name and Message; passes `null` for sport
+- Functional TestimonialsManagerPage.tsx — lists all testimonials with approve/unapprove toggle and delete button
+- Testimonials quick-action card on DashboardHomePage.tsx
 
 ### Modify
-- Hero headline to be more personal and bold — include the photographer's name
-- Specialties rows to include a small icon or visual cue per sport, and a "Book [sport]" link
-- Featured Work section to always show (fallback text if empty)
-- Testimonials section to feel more editorial/magazine-style
-- Review form section to stand out more clearly with better contrast
-- CTA section to feel more premium (better copy, cleaner layout)
-- Social follow section to match the overall dark aesthetic better
+- LandingPage.tsx: add the testimonials section between Featured Work and the CTA section
+- TestimonialsManagerPage.tsx: replace placeholder with working management UI
+- DashboardHomePage.tsx: add a Testimonials management card in the Quick Actions grid
+- useQueries.ts: add testimonial hooks
 
 ### Remove
-- Redundant or generic marketing language
-- Excessive whitespace in empty states
+- Nothing
 
 ## Implementation Plan
-1. Update LandingPage.tsx hero: add photographer name + tagline + more personal copy
-2. Add a subtle stats bar (sports covered, sessions booked, etc.) below hero
-3. Improve specialties section rows with sport-specific icons (lucide icons)
-4. Add Book button to specialties section
-5. Improve featured work section with better fallback when no photos
-6. Make testimonials section feel more editorial
-7. Polish review form and CTA sections
-8. Keep all existing data hooks and backend connections intact
+1. Add testimonial hooks to useQueries.ts — `useGetApprovedTestimonials` (public query, no auth), `useSubmitTestimonial` (mutation, no auth, sport=null always), `useGetAllTestimonials` (admin query), `useToggleTestimonialApproval` (admin mutation), `useDeleteTestimonial` (admin mutation)
+2. Update LandingPage.tsx — add a "What Clients Say" section showing approved testimonials, then a simple form below it with Name + Message fields and a Submit button; on success show a thank-you message
+3. Rewrite TestimonialsManagerPage.tsx — table/list of all testimonials with name, message, approved status, and action buttons (approve/unapprove, delete)
+4. Update DashboardHomePage.tsx — add Testimonials card with a link to /dashboard/testimonials

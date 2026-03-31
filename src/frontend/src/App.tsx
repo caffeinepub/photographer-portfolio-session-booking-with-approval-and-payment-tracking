@@ -23,6 +23,7 @@ import BookingDetailPage from "./pages/Dashboard/BookingDetailPage";
 import BookingsListPage from "./pages/Dashboard/BookingsListPage";
 import DashboardHomePage from "./pages/Dashboard/DashboardHomePage";
 import PortfolioManagerPage from "./pages/Dashboard/PortfolioManagerPage";
+import TestimonialsManagerPage from "./pages/Dashboard/TestimonialsManagerPage";
 import LandingPage from "./pages/LandingPage";
 import PortfolioDetailPage from "./pages/PortfolioDetailPage";
 import PortfolioGalleryPage from "./pages/PortfolioGalleryPage";
@@ -162,6 +163,16 @@ const dashboardAvailabilityRoute = createRoute({
   ),
 });
 
+const dashboardTestimonialsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dashboard/testimonials",
+  component: () => (
+    <AdminRoute>
+      <TestimonialsManagerPage />
+    </AdminRoute>
+  ),
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   portfolioRoute,
@@ -178,6 +189,7 @@ const routeTree = rootRoute.addChildren([
   dashboardPortfolioRoute,
   dashboardAlbumsRoute,
   dashboardAvailabilityRoute,
+  dashboardTestimonialsRoute,
 ]);
 
 const router = createRouter({ routeTree });

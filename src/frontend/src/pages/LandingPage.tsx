@@ -10,20 +10,44 @@ import {
   Timer,
   Zap,
 } from "lucide-react";
+import { useState } from "react";
 import { SiInstagram, SiTiktok } from "react-icons/si";
 import {
   useGetAllPortfolioItems,
+  useGetApprovedTestimonials,
   useGetHeroBackground,
+  useSubmitTestimonial,
 } from "../hooks/useQueries";
 
 export default function LandingPage() {
   const { data: portfolioItems = [] } = useGetAllPortfolioItems();
   const { data: heroBackground = "" } = useGetHeroBackground();
+  const { data: approvedTestimonials = [] } = useGetApprovedTestimonials();
+  const submitTestimonial = useSubmitTestimonial();
   const featuredItems = portfolioItems.slice(0, 3);
+
+  const [reviewName, setReviewName] = useState("");
+  const [reviewMessage, setReviewMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   const heroBg =
     heroBackground ||
     "/assets/generated/photography-hero-sports-concert.dim_1920x1080.png";
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await submitTestimonial.mutateAsync({
+        clientName: reviewName,
+        quote: reviewMessage,
+      });
+      setSubmitted(true);
+      setReviewName("");
+      setReviewMessage("");
+    } catch {
+      // error state handled by submitTestimonial.isError
+    }
+  };
 
   return (
     <div className="flex flex-col">
@@ -69,7 +93,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Scroll hint */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 text-white/30">
           <div className="w-px h-12 bg-gradient-to-b from-transparent to-white/30" />
         </div>
@@ -246,6 +269,119 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-20 border-t border-border">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto">
+            <p className="text-xs font-medium tracking-widest uppercase text-muted-foreground mb-3">
+              Testimonials
+            </p>
+            <h2 className="font-serif text-4xl font-bold mb-10">
+              What Clients Say
+            </h2>
+
+            {approvedTestimonials.length > 0 && (
+              <div className="space-y-6 mb-16" data-ocid="testimonials.list">
+                {approvedTestimonials.map((t, index) => (
+                  <div
+                    key={t.id.toString()}
+                    className="border-l-2 border-border pl-6 py-1"
+                    data-ocid={`testimonials.item.${index + 1}`}
+                  >
+                    <p className="text-base text-foreground mb-3">
+                      "{t.quote}"
+                    </p>
+                    <p className="text-sm font-semibold text-muted-foreground">
+                      — {t.clientName}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {submitted ? (
+              <div
+                className="py-8 text-center"
+                data-ocid="testimonials.success_state"
+              >
+                <p className="font-serif text-xl font-semibold mb-2">
+                  Thank you!
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Your review has been submitted and will appear after approval.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-sm font-medium tracking-widest uppercase text-muted-foreground mb-6">
+                  Leave a Review
+                </p>
+                <form
+                  onSubmit={handleSubmitReview}
+                  className="space-y-4"
+                  data-ocid="testimonials.modal"
+                >
+                  <div>
+                    <label
+                      htmlFor="testimonial-name"
+                      className="block text-sm font-medium mb-2"
+                    >
+                      Name
+                    </label>
+                    <input
+                      id="testimonial-name"
+                      type="text"
+                      value={reviewName}
+                      onChange={(e) => setReviewName(e.target.value)}
+                      required
+                      data-ocid="testimonials.input"
+                      className="w-full px-4 py-2.5 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="testimonial-message"
+                      className="block text-sm font-medium mb-2"
+                    >
+                      Message
+                    </label>
+                    <textarea
+                      id="testimonial-message"
+                      value={reviewMessage}
+                      onChange={(e) => setReviewMessage(e.target.value)}
+                      required
+                      rows={4}
+                      data-ocid="testimonials.textarea"
+                      className="w-full px-4 py-2.5 rounded-md border border-border bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                      placeholder="Share your experience..."
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled={submitTestimonial.isPending}
+                    data-ocid="testimonials.submit_button"
+                    className="w-full sm:w-auto px-8"
+                  >
+                    {submitTestimonial.isPending
+                      ? "Submitting..."
+                      : "Submit Review"}
+                  </Button>
+                  {submitTestimonial.isError && (
+                    <p
+                      className="text-sm text-destructive"
+                      data-ocid="testimonials.error_state"
+                    >
+                      Something went wrong. Please try again.
+                    </p>
+                  )}
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-24 bg-background border-t border-border">
         <div className="container mx-auto px-4 max-w-3xl">
@@ -299,7 +435,6 @@ export default function LandingPage() {
               <SiInstagram className="h-4 w-4" />
               Instagram
             </a>
-
             <a
               href="https://www.tiktok.com/@_slr.pics_?_r=1&_t=ZP-93qjJcBT9Re"
               target="_blank"

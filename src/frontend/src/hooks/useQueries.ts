@@ -6,6 +6,7 @@ import type {
   PaymentStatus,
   PortfolioItem,
   PublicAlbumView,
+  Testimonial,
   UserProfile,
 } from "../backend";
 import { useActor } from "./useActor";
@@ -74,7 +75,7 @@ export function useSaveCallerUserProfile() {
   });
 }
 
-// Admin Check — keyed by identity principal so it re-checks on every login
+// Admin Check
 export function useIsCallerAdmin() {
   const { actor, isFetching } = useActor();
   const { identity } = useInternetIdentity();
@@ -496,6 +497,78 @@ export function useSetUnavailableDates() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["unavailableDates"] });
+    },
+  });
+}
+
+// ---- Testimonials ----
+
+export function useGetApprovedTestimonials() {
+  const { actor, isFetching } = useActor();
+  return useQuery<Testimonial[]>({
+    queryKey: ["approvedTestimonials"],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getApprovedTestimonials();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useSubmitTestimonial() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { clientName: string; quote: string }) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.submitTestimonial(data.clientName, data.quote, null);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["approvedTestimonials"] });
+    },
+  });
+}
+
+export function useGetAllTestimonials() {
+  const { actor, isFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  const principalKey = identity?.getPrincipal().toString() ?? "anonymous";
+  return useQuery<Testimonial[]>({
+    queryKey: ["allTestimonials", principalKey],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllTestimonials();
+    },
+    enabled: !!actor && !isFetching && principalKey !== "anonymous",
+  });
+}
+
+export function useToggleTestimonialApproval() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: bigint) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.toggleTestimonialApproval(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allTestimonials"] });
+      queryClient.invalidateQueries({ queryKey: ["approvedTestimonials"] });
+    },
+  });
+}
+
+export function useDeleteTestimonial() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: bigint) => {
+      if (!actor) throw new Error("Actor not available");
+      return actor.deleteTestimonial(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allTestimonials"] });
+      queryClient.invalidateQueries({ queryKey: ["approvedTestimonials"] });
     },
   });
 }
